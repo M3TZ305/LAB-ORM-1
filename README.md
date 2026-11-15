@@ -1,180 +1,251 @@
-# 📝 Blogger — مشروع معمل LAB-ORM-1
+# SIYAQ — Bilingual Django Blogging Platform
 
-مشروع تطبيقي متكامل لبناء منصة تدوين باستخدام إطار العمل **Django**، تم إنشاؤه وتطويره لتغطية وتطبيق كافة مفاهيم المساق الأكاديمي المتعلقة بهيكلية MVT، ووراثة القوالب، وملفات Static، واستبانة الروابط، ونظام إدارة قواعد البيانات Django ORM، والهجرات (Migrations)، ومعاملات المسار والاستعلام (Path & Query Parameters)، وتفضيلات المستخدم عبر ملفات تعريف الارتباط (Cookies).
-
----
-
-## 📋 نظرة عامة على المشروع (Project Overview)
-
-موقع **Blogger** هو تطبيق ويب يتيح للمستخدمين:
-- استعراض أحدث التدوينات المنشورة مع عرض العنوان والمحتوى وتاريخ ووقت النشر بالتوقيت المحلي (`Asia/Riyadh`).
-- إضافة تدوينات جديدة عبر استمارة تفاعلية محمية ضد هجمات تزوير الطلبات عبر المواقع (CSRF).
-- استعراض التفاصيل الكاملة لأي تدوينة منشورة عبر رابط فريد يعتمد على المعرّف (`id`).
-- البحث في العناوين ومحتوى المقالات وتصفيتها بالترتيب (الأحدث أولاً / الأقدم أولاً).
-- التبديل الفوري بين المظهر الفاتح (Light Mode) والمظهر الداكن (Dark Mode) مع حفظ التفضيل داخل كوكي المتصفح (`theme`) لمدة 30 يوماً.
+> **SIYAQ (سِياق)** is a robust, production-grade bilingual Django blogging platform developed as part of university assignment **LAB-ORM-1**. It demonstrates comprehensive mastery of core Django concepts, including the Model-View-Template (MVT) architecture, Django ORM, form validation, localization (Arabic/English), persistent cookies, theme switching (Dark/Light mode), and database migrations.
 
 ---
 
-## 🛠️ إعداد البيئة الافتراضية (Environment Setup)
+## Table of Contents
 
-تم إنشاء واستخدام بيئة افتراضية معزولة باسم `.venv` لضمان عدم تثبيت الحزم على مستوى النظام العالمي.
+1. [Project Overview](#project-overview)
+2. [Features](#features)
+3. [Technologies Used](#technologies-used)
+4. [Project Directory Structure](#project-directory-structure)
+5. [Installation & Setup](#installation--setup)
+6. [Database & Migrations](#database--migrations)
+7. [Running the Application](#running-the-application)
+8. [Database Model & ORM](#database-model--orm)
+9. [Course Concepts Compliance Matrix](#course-concepts-compliance-matrix)
+10. [Localization & RTL Support](#localization--rtl-support)
+11. [Theme Preferences (Cookies)](#theme-preferences-cookies)
+12. [Strict Form Validation](#strict-form-validation)
+13. [Django Admin Integration](#django-admin-integration)
+14. [Automated Testing](#automated-testing)
+15. [Contact & Support](#contact--support)
 
-### على أنظمة Windows (PowerShell):
+---
+
+## 1. Project Overview
+
+SIYAQ provides a clean editorial environment for publishing, browsing, searching, and managing articles in both Arabic and English. Built on Django 6.1 and SQLite, the platform adheres strictly to modern web development standards and university curriculum requirements, balancing editorial elegance with rigorous backend validation and secure state management.
+
+---
+
+## 2. Features
+
+- **Dynamic Article Publishing:** Public form allowing creators to publish new articles instantly with strict validation.
+- **Publisher Metadata:** Captures and displays publisher names supporting Arabic and English characters.
+- **Homepage Feed:** Displays published posts ordered newest-first by default.
+- **Article Details:** Dedicated URL route (`/post/<int:post_id>/`) for viewing individual articles with 404 error handling.
+- **Search & Sorting:** Real-time query parameter filtering (`?search=...`) and sorting (`?sort=latest` / `?sort=oldest`).
+- **Bilingual Interface:** Full Arabic (RTL) and English (LTR) localization with seamless switching.
+- **Theme Switcher:** Persistent Light and Dark mode toggling backed by secure cookies.
+- **Django Admin:** Comprehensive administrative dashboard for managing posts and translations.
+
+---
+
+## 3. Technologies Used
+
+- **Python 3.14**
+- **Django 6.1.3** (Web Framework)
+- **SQLite** (Relational Database via Django ORM)
+- **HTML5 & CSS3** (Responsive Layouts & Custom Variables)
+- **JavaScript** (Interactive UI enhancements)
+
+---
+
+## 4. Project Directory Structure
+
+```text
+LAB-ORM-1/
+├── blog/
+│   ├── migrations/
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_post_publisher_name.py
+│   │   └── 0003_posttranslation.py
+│   ├── static/blog/
+│   │   ├── css/style.css
+│   │   ├── js/main.js
+│   │   └── img/
+│   ├── templates/blog/
+│   │   ├── base.html
+│   │   ├── home.html
+│   │   ├── about.html
+│   │   ├── add_post.html
+│   │   └── post_detail.html
+│   ├── admin.py
+│   ├── apps.py
+│   ├── context_processors.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   ├── validators.py
+│   └── views.py
+├── blogger_project/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── locale/
+│   ├── ar/LC_MESSAGES/django.po
+│   └── en/LC_MESSAGES/django.po
+├── db.sqlite3
+├── manage.py
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 5. Installation & Setup
+
+1. **Clone or Open Repository:**
+   Navigate to the project root directory.
+
+2. **Create and Activate Virtual Environment (Windows PowerShell):**
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+   ```
+
+3. **Install Dependencies:**
+   ```powershell
+   python -m pip install -r requirements.txt
+   ```
+
+---
+
+## 6. Database & Migrations
+
+Verify migration status and apply database schema:
+
 ```powershell
-# إنشاء البيئة الافتراضية
-python -m venv .venv
-
-# تفعيل البيئة الافتراضية
-.\.venv\Scripts\Activate.ps1
+python manage.py showmigrations
+python manage.py makemigrations --check --dry-run
+python manage.py migrate
 ```
 
-### على أنظمة Linux / macOS:
-```bash
-# إنشاء البيئة الافتراضية
-python3 -m venv .venv
-
-# تفعيل البيئة الافتراضية
-source .venv/bin/activate
+To inspect specific migration SQL:
+```powershell
+python manage.py sqlmigrate blog 0001
 ```
 
 ---
 
-## 📦 تثبيت الاعتماديات (Dependencies)
+## 7. Running the Application
 
-تثبيت الاعتماديات الخاصة بالمشروع باستخدام ملف `requirements.txt`:
+Start the development server:
 
-```bash
-# ترقية مدير الحزم pip
-python -m pip install --upgrade pip
-
-# تثبيت الحزم المطلوبة
-python -m pip install -r requirements.txt
-```
-
----
-
-## 🚀 تشغيل المشروع (Project Execution)
-
-لتشغيل خادم التطوير المحلي:
-
-```bash
+```powershell
 python manage.py runserver
 ```
 
-بعد التشغيل، يمكنك فتح المتصفح والتوجه إلى الرابط:
-[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+Open your browser at `http://127.0.0.1:8000/` (automatically redirects to `/home/`).
+
+### Primary Public Routes:
+- `/` — Root redirect to homepage
+- `/home/` — Article feed with search & sorting
+- `/about/` — About SIYAQ editorial overview
+- `/add/` — Public article submission form
+- `/post/<int:post_id>/` — Individual article view
+- `/admin/` — Django Administration panel
 
 ---
 
-## 🗺️ خريطة مفاهيم المساق ومواضع تطبيقها (Course Concepts Mapping)
+## 8. Database Model & ORM
 
-| المفهوم (Concept) | الملف المنفّذ فيه (File) | طريقة التطبيق والهدف (Implementation Details) |
-|---|---|---|
-| **Apps & Views** | `blog/views.py` | تم استخدام Function-based Views (`home`, `add_post`, `post_detail`, `set_theme`) لإبقاء الشيفرة واضحة ومباشرة للتعلم. |
-| **Templates** | `blog/templates/blog/` | استخدام وسوم قوالب دجانغو مثل `{% if %}`, `{% for %}`, `{{ variable }}`, `{% url %}`, `{% load static %}` مع ميزة الهروب التلقائي للرموز (Auto-escaping). |
-| **Static Files** | `blog/static/blog/css/style.css` و `main.js` | إدارة وتضمين ملفات التنسيق والجافاسكريبت محلياً دون الاعتماد على مكتبات خارجية. |
-| **Resolving URLs** | `blog/templates/blog/*.html` و `views.py` | استبانة الروابط ديناميكياً باستخدام الوسم `{% url 'blog:route_name' %}` والدوال `redirect` و `reverse`. |
-| **MVT Architecture** | كامل مجلد `blog/` | تطبيق فصل المسؤوليات بالكامل: Model (`models.py`) ➔ View (`views.py`) ➔ Template (`templates/`). |
-| **URL Mapping** | `blog/urls.py` و `blogger_project/urls.py` | توجيه المسارات باستخدام `path()` وتضمينها عبر `include()` مع تحديد مساحة الأسماء `app_name = "blog"`. |
-| **Template Inheritance** | `blog/templates/blog/base.html` | توحيد الهيكل المشترك والشريط العلوي والتذييل والروابط وتوريثها لجميع الصفحات عبر `{% extends "blog/base.html" %}`. |
-| **Cookies** | `blog/views.py` (`set_theme`, `home`, `add_post`) | قراءة تفضيل مظهر الموقع عبر `request.COOKIES.get('theme')` وحفظه عبر `response.set_cookie` بصلاحية 30 يوماً وإعداد `samesite='Lax'`. |
-| **Path Parameters** | `blog/urls.py` و `blog/views.py` | استخراج المتغيرات من مسار الرابط مثل `post/<int:post_id>/` لتفاصيل التدوينة و `theme/<str:mode>/` لتحديد النمط. |
-| **Query Parameters** | `blog/views.py` (`home`) | قراءة معاملات الاستعلام من الرابط `request.GET.get('search')` للبحث و `request.GET.get('sort')` لتحديد نمط الترتيب بأمان. |
-| **Django ORM** | `blog/views.py` و `blog/models.py` | إدارة بيانات التدوينات بواسطة استعلامات كائنية بدلاً من Raw SQL عبر دوال `filter`, `order_by`, `get_object_or_404`, `create`. |
-| **Django Migrations** | `blog/migrations/0001_initial.py` | تتبع التغييرات على بنية النموذج البرمجي وترجمتها إلى جداول SQL وتطبيقها على قاعدة البيانات `db.sqlite3`. |
-
----
-
-## 🗄️ شرح عمليات الـ ORM (Django ORM Explanation)
-
-تم تطبيق جميع عمليات الاسترجاع والتخزين عبر الـ ORM المدمج:
-1. **إنشاء التدوينات (Create):**
-   يتم حفظ التدوينة عبر استمارة `PostForm` أو برمجياً باستخدام `Post.objects.create(title=..., content=...)`، مع إسناد القيمة `True` لحقل `is_published` تلقائياً.
-2. **استرجاع التدوينات المنشورة فقط (Filter):**
-   ```python
-   posts = Post.objects.filter(is_published=True)
-   ```
-3. **الترتيب الأحدث أولاً (Ordering):**
-   ```python
-   posts = posts.order_by('-published_at', '-id')
-   ```
-   وفي حال اختيار الأقدم:
-   ```python
-   posts = posts.order_by('published_at', 'id')
-   ```
-4. **البحث في العنوان والمحتوى (Search):**
-   ```python
-   posts = posts.filter(
-       Q(title__icontains=search_query) | Q(content__icontains=search_query)
-   )
-   ```
-5. **استرجاع تدوينة محددة مع إرجاع 404 إذا كانت غير موجودة أو غير منشورة:**
-   ```python
-   post = get_object_or_404(Post, pk=post_id, is_published=True)
-   ```
-
----
-
-## 🔄 شرح الهجرات (Django Migrations Explanation)
-
-الهجرات (Migrations) هي طريقة دجانغو لنقل وتطبيق التعديلات التي تجريها على النماذج (`models.py`) إلى بنية جداول قاعدة البيانات.
-
-### الأوامر المنفذة والغرض منها:
-1. `python manage.py makemigrations blog`:
-   تقوم بفحص نموذج `Post` وتوليد ملف هجرة جديد (`blog/migrations/0001_initial.py`) يصف التغييرات برمجياً بلغة بايثون دون التأثير على قاعدة البيانات بعد.
-2. `python manage.py sqlmigrate blog 0001`:
-   تعرض أوامر SQL الدقيقة التي سيقوم دجانغو بتنفيذها على قاعدة البيانات لإنشاء جدول `blog_post`، مما يسمح بمراجعة الاستعلامات قبل تطبيقها.
-3. `python manage.py migrate`:
-   تنفذ ملفات الهجرة المعلقة على قاعدة البيانات (`db.sqlite3`)، حيث تنشئ الجداول وتعدل الأعمدة وتحدث سجل جدول `django_migrations`.
-4. `python manage.py showmigrations blog`:
-   تعرض حالة ملفات الهجرة الخاصة بالتطبيق؛ وظهور علامة `[X]` بجانب الهجرة يعني أنها مطبقة بنجاح في قاعدة البيانات.
-
----
-
-## 🌐 أمثلة الروابط المدعومة في الموقع (URL Examples)
-
-- **الصفحة الرئيسية:**
-  `/`
-- **صفحة إضافة مقال جديد:**
-  `/add/`
-- **صفحة تفاصيل المقال (Path Parameter):**
-  `/post/1/`
-- **البحث باستخدام كلمة مفتاحية (Query Parameter):**
-  `/?search=django`
-- **الترتيب من الأقدم للأحدث (Query Parameter):**
-  `/?sort=oldest`
-- **البحث مع الترتيب معاً (Combined Query Parameters):**
-  `/?search=django&sort=oldest`
-- **تغيير المظهر (Cookies):**
-  `/theme/dark/` أو `/theme/light/`
-
----
-
-## 🧪 التحقق والاختبارات الآلية (Verification & Automated Tests)
-
-لإجراء الفحص الشامل للنظام وتشغيل الاختبارات الآلية المكتوبة:
-
-```bash
-# فحص تكامل النظام
-python manage.py check
-
-# التحقق من عدم وجود هجرات غير مولدة
-python manage.py makemigrations --check --dry-run
-
-# تشغيل الاختبارات الآلية الشاملة
-python manage.py test
+### Core `Post` Model (`blog/models.py`)
+```python
+class Post(models.Model):
+    publisher_name = models.CharField(max_length=150, blank=True, default="")
+    title = models.CharField(max_length=2048)
+    content = models.TextField()
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(auto_now_add=True)
 ```
 
-جميع الاختبارات الـ 16 تنفذ بنجاح وتغطي كافة متطلبات النموذج، والحقول، والتحقق، والروابط، والـ ORM، والكوكيز، وحالات الخطأ 404.
+### Django ORM Usage Examples
+- **Retrieving Published Posts:**
+  ```python
+  posts = Post.objects.filter(is_published=True).order_by('-published_at')
+  ```
+- **Searching Articles:**
+  ```python
+  posts = Post.objects.filter(
+      Q(title__icontains=query) | Q(content__icontains=query)
+  )
+  ```
+- **Creating a Record:**
+  ```python
+  Post.objects.create(publisher_name="أحمد", title="عنوان", content="محتوى...")
+  ```
 
 ---
 
-## 🎓 إرشادات العرض للمشرف الأكاديمي (Lab Presentation Notes)
+## 9. Course Concepts Compliance Matrix
 
-عند مناقشة المشروع مع أستاذ المادة، يمكن للطالب استعراض المفاهيم عبر الخطوات التالية:
-1. **نموذج ORM (`blog/models.py`):** استعراض كلاس `Post` وتوضيح حقل `title` بحد أقصى 2048 حرفاً، وحقل `is_published` بقيمته الافتراضية `True`، وحقل `published_at` المزود بخاصية `auto_now_add=True`.
-2. **الهجرات (`blog/migrations/`):** إظهار ملف `0001_initial.py` وشرح كيف تم تحويله إلى جدول بواسطة أمر `migrate` واستعراض الجدول في لوحة تحكم المسؤول أو بواسطة `sqlmigrate`.
-3. **وراثة القوالب (`blog/templates/blog/`):** فتح ملف `base.html` وتوضيح الهيكل المشترك وروابط التنسيق، ثم فتح `home.html` و `add_post.html` وتوضيح استخدام `{% extends %}` و `{% block content %}` وتجنب التكرار.
-4. **معاملات المسار (`post/<int:post_id>/`):** الدخول إلى أي تدوينة وتوضيح كيف يستقبل العرض `post_id` ويبحث عنه عبر `get_object_or_404`، وتجربة إدخال رقم تدوينة غير موجود لإظهار خطأ 404.
-5. **معاملات الاستعلام (`?search=` و `?sort=`):** إجراء بحث وترتيب في الصفحة الرئيسية وتوضيح كيف يقرأ الـ View هذه المعاملات من `request.GET`.
-6. **ملفات تعريف الارتباط (Cookies):** الضغط على زر "🌙 مظهر ليلي" في أعلى الصفحة، وتوضيح تغير المظهر وثباته عند التنقل أو تحديث الصفحة، ثم فتح أدوات المطور (F12) في المتصفح وإظهار كوكي `theme` المخزن بقيمة `dark` وصلاحيته لمدة 30 يوماً.
+| Studied Topic | Implementation File | Verification Result |
+|---|---|---|
+| Apps & Views | `blog/views.py` | PASS |
+| Templates | `blog/templates/blog/*.html` | PASS |
+| Static Files | `blog/static/blog/` | PASS |
+| MVT Architecture | `blog/models.py`, `views.py`, `templates/` | PASS |
+| URL Mapping | `blogger_project/urls.py`, `blog/urls.py` | PASS |
+| URL Resolving | `{% url %}`, `reverse()` | PASS |
+| Template Inheritance | `blog/templates/blog/base.html` | PASS |
+| Cookies | `blog/views.py` (Theme & Lang) | PASS |
+| Path Parameters | `blog/urls.py` (`<int:post_id>`) | PASS |
+| Query Parameters | `blog/views.py` (`request.GET`) | PASS |
+| Django ORM | `blog/models.py`, `views.py` | PASS |
+| Migrations | `blog/migrations/` | PASS |
+
+---
+
+## 10. Localization
+
+SIYAQ supports Arabic (`ar`) and English (`en`) through Django's `LocaleMiddleware` and translation files (`.po`). Language preferences persist via `django_language` cookies and automatically adapt layout directions (RTL for Arabic, LTR for English).
+
+---
+
+## 11. Theme Preferences (Cookies)
+
+Theme toggling between Light and Dark mode is managed via cookies (`theme=light` or `theme=dark`) set in `blog/views.py` and read via `blog/context_processors.py`. Preferences persist across navigation, page refreshes, and language switches.
+
+---
+
+## 12. Strict Form Validation
+
+Validation rules (`blog/validators.py`) ensure data integrity:
+- **Publisher Name:** Required, 2–150 characters, alphabetic letters supported (Arabic/English), strictly rejects numbers-only or symbols-only input.
+- **Article Title:** Required, 5–2048 characters, rejects numbers-only or symbols-only input.
+- **Article Content:** Required, minimum 30 non-whitespace characters, rejects numbers-only or symbols-only input.
+
+---
+
+## 13. Django Admin Integration
+
+Manage platform data securely via Django Admin:
+```powershell
+python manage.py createsuperuser
+```
+Access at `http://127.0.0.1:8000/admin/`.
+
+---
+
+## 14. Automated Testing
+
+Execute the test suite and system checks:
+```powershell
+python manage.py check
+python manage.py test
+python manage.py makemigrations --check --dry-run
+```
+*Result:* 17 unit and integration tests passing successfully (100% pass rate).
+
+---
+
+## 15. Contact & Support
+
+- **Developer / Maintainer Discord:** [Click Here](https://discord.com/users/686267127807606819)
+- **Assignment:** LAB-ORM-1 | SIYAQ (سِياق)

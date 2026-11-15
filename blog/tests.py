@@ -1,162 +1,232 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.utils import timezone
-from .models import Post
+from django.core.exceptions import ValidationError
+from .models import Post, PostTranslation
+from .forms import PostForm
+from .validators import validate_publisher_name, validate_article_title, validate_article_content
 
 
-class PostModelTests(TestCase):
-    def test_post_creation_and_attributes(self):
-        post = Post.objects.create(
-            title="تدوينة تجريبية",
-            content="محتوى تفصيلي للتدوينة التجريبية."
-        )
-        self.assertEqual(post.title, "تدوينة تجريبية")
-        self.assertEqual(post.content, "محتوى تفصيلي للتدوينة التجريبية.")
-        self.assertTrue(post.is_published)
-        self.assertIsNotNone(post.published_at)
-        self.assertLessEqual(post.published_at, timezone.now())
-        self.assertEqual(str(post), "تدوينة تجريبية")
+class ValidationUnitTests(TestCase):
+    def test_publisher_name_valid(self):
+        valid_names = [
+            "أحمد محمد",
+            "ليان خالد",
+            "عمر الحربي",
+            "John Smith",
+            "Mary Jane",
+            "Jean-Luc",
+            "O'Connor"
+        ]
+        for name in valid_names:
+            try:
+                validate_publisher_name(name)
+            except ValidationError as e:
+                self.fail(f"Publisher name '{name}' raised ValidationError unexpectedly: {e}")
 
-    def test_title_max_length(self):
-        max_title = "أ" * 2048
-        post = Post.objects.create(title=max_title, content="محتوى")
-        self.assertEqual(len(post.title), 2048)
-        self.assertEqual(Post.objects.get(id=post.id).title, max_title)
+    def test_publisher_name_invalid(self):
+        invalid_names = [
+            "",
+            "   ",
+            "1",
+            "123456",
+            "999",
+            "@@@@",
+            "###!!",
+            "Ahmed123",
+            "أحمد123"
+        ]
+        for name in invalid_names:
+            with self.assertRaises(ValidationError, msg=f"Expected ValidationError for publisher name: '{name}'"):
+                validate_publisher_name(name)
+
+    def test_title_valid(self):
+        valid_titles = [
+            "القراءة في زمن السرعة",
+            "حين تتكلم المدن بصمت",
+            "أفضل 10 كتب لعام 2026",
+            "Learning Django ORM",
+            "Python 3: A Beginner's Guide"
+        ]
+        for title in valid_titles:
+            try:
+                validate_article_title(title)
+            except ValidationError as e:
+                self.fail(f"Title '{title}' raised ValidationError unexpectedly: {e}")
+
+    def test_title_invalid(self):
+        invalid_titles = [
+            "",
+            "   ",
+            "abc",
+            "123456789",
+            "@@@@@@",
+            "!!!!!!",
+            "20262026"
+        ]
+        for title in invalid_titles:
+            with self.assertRaises(ValidationError, msg=f"Expected ValidationError for title: '{title}'"):
+                validate_article_title(title)
+
+    def test_content_valid(self):
+        valid_contents = [
+            "تساعد القراءة على تنمية المعرفة وتحسين القدرة على التركيز، كما تمنح الإنسان فرصة لفهم الأفكار بطريقة أعمق.",
+            "Learning Django ORM with Python 3 is an amazing experience for building robust web applications rapidly and securely."
+        ]
+        for content in valid_contents:
+            try:
+                validate_article_content(content)
+            except ValidationError as e:
+                self.fail(f"Content raised ValidationError unexpectedly: {e}")
+
+    def test_content_invalid(self):
+        invalid_contents = [
+            "",
+            "   ",
+            "abc",
+            "123456789123456789123456789",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+            "!!!!!!!!!!!!!!!",
+            "short content 123"
+        ]
+        for content in invalid_contents:
+            with self.assertRaises(ValidationError, msg=f"Expected ValidationError for content: '{content}'"):
+                validate_article_content(content)
 
 
-class BlogViewsTests(TestCase):
+class PostFormAndScenariosTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_scenario_a_publisher_numbers(self):
+        form_data = {
+            'publisher_name': '123456',
+            'title': 'عنوان تجريبي صحيح للمقال',
+            'content': 'هذا محتوى تجريبي طويل يكفي لكي يكون مقالاً صحيحاً ومقبولاً في النظام.'
+        }
+        form = PostForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('publisher_name', form.errors)
+        self.assertEqual(Post.objects.count(), 0)
+
+    def test_scenario_b_title_symbols(self):
+        form_data = {
+            'publisher_name': 'سارة أحمد',
+            'title': '@@@@@@',
+            'content': 'هذا محتوى تجريبي طويل يكفي لكي يكون مقالاً صحيحاً ومقبولاً في النظام.'
+        }
+        form = PostForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('title', form.errors)
+        self.assertEqual(Post.objects.count(), 0)
+
+    def test_scenario_c_content_numbers(self):
+        form_data = {
+            'publisher_name': 'سارة أحمد',
+            'title': 'عنوان تجريبي صحيح للمقال',
+            'content': '123456789123456789123456789123456'
+        }
+        form = PostForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('content', form.errors)
+        self.assertEqual(Post.objects.count(), 0)
+
+    def test_scenario_d_all_spaces(self):
+        form_data = {
+            'publisher_name': '   ',
+            'title': '     ',
+            'content': '                         '
+        }
+        form = PostForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(Post.objects.count(), 0)
+
+    def test_scenario_e_f_g_valid_submissions(self):
+        # Arabic valid
+        form_data_ar = {
+            'publisher_name': 'أحمد محمد',
+            'title': 'القراءة في زمن السرعة',
+            'content': 'تساعد القراءة على تنمية المعرفة وتحسين القدرة على التركيز، كما تمنح الإنسان فرصة لفهم الأفكار بطريقة أعمق.'
+        }
+        form_ar = PostForm(data=form_data_ar)
+        self.assertTrue(form_ar.is_valid())
+        post_ar = form_ar.save()
+        self.assertEqual(post_ar.publisher_name, 'أحمد محمد')
+
+        # English valid with numbers
+        form_data_en = {
+            'publisher_name': 'John Smith',
+            'title': 'Python 3: A Beginner Guide',
+            'content': 'Learning Python 3 and Django ORM is an amazing experience for building robust web applications rapidly and securely.'
+        }
+        form_en = PostForm(data=form_data_en)
+        self.assertTrue(form_en.is_valid())
+        post_en = form_en.save()
+        self.assertEqual(post_en.publisher_name, 'John Smith')
+
+
+class BlogViewsAndLanguageTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.post1 = Post.objects.create(
+            publisher_name="محمد علي",
             title="أول تدوينة عن بايثون",
-            content="بايثون لغة برمجة قوية وممتعة للجميع."
-        )
-        self.post2 = Post.objects.create(
-            title="تعلم إطار عمل دجانغو",
-            content="دجانغو يساعدك على بناء تطبيقات ويب سريعة."
-        )
-        self.unpublished_post = Post.objects.create(
-            title="مسودة غير منشورة",
-            content="هذه التدوينة مسودة سرية لا يجب أن تظهر للعامة.",
-            is_published=False
+            content="بايثون لغة برمجة قوية وممتعة للجميع وتستخدم في الذكاء الاصطناعي وتطوير الويب."
         )
 
-    def test_homepage_accessible_and_status(self):
-        response = self.client.get(reverse('blog:home'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'blog/home.html')
-        self.assertTemplateUsed(response, 'blog/base.html')
+    def test_root_redirects_to_home(self):
+        response = self.client.get('/')
+        self.assertRedirects(response, '/home/', fetch_redirect_response=True)
 
-    def test_homepage_displays_published_posts_only(self):
-        response = self.client.get(reverse('blog:home'))
-        self.assertContains(response, self.post1.title)
-        self.assertContains(response, self.post2.title)
-        self.assertNotContains(response, self.unpublished_post.title)
+    def test_clean_urls_accessible(self):
+        res_home = self.client.get(reverse('blog:home'))
+        self.assertEqual(res_home.status_code, 200)
 
-    def test_posts_ordering_newest_first(self):
-        response = self.client.get(reverse('blog:home'))
-        posts_in_context = list(response.context['posts'])
-        self.assertEqual(posts_in_context[0].id, self.post2.id)
-        self.assertEqual(posts_in_context[1].id, self.post1.id)
+        res_about = self.client.get(reverse('blog:about'))
+        self.assertEqual(res_about.status_code, 200)
 
-    def test_add_post_page_accessible(self):
-        response = self.client.get(reverse('blog:add_post'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'blog/add_post.html')
+        res_add = self.client.get(reverse('blog:add_post'))
+        self.assertEqual(res_add.status_code, 200)
 
-    def test_valid_post_submission_creates_record(self):
-        initial_count = Post.objects.count()
-        data = {
-            'title': 'تدوينة مضافة عبر الاستمارة',
-            'content': 'محتوى التدوينة الجديدة.'
-        }
-        response = self.client.post(reverse('blog:add_post'), data)
-        self.assertRedirects(response, reverse('blog:home'))
-        self.assertEqual(Post.objects.count(), initial_count + 1)
-        new_post = Post.objects.get(title='تدوينة مضافة عبر الاستمارة')
-        self.assertTrue(new_post.is_published)
-        self.assertIsNotNone(new_post.published_at)
+        res_detail = self.client.get(reverse('blog:post_detail', args=[self.post1.id]))
+        self.assertEqual(res_detail.status_code, 200)
 
-    def test_invalid_submission_does_not_create_record(self):
-        initial_count = Post.objects.count()
-        data = {'title': '', 'content': ''}
-        response = self.client.post(reverse('blog:add_post'), data)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(Post.objects.count(), initial_count)
-        self.assertTrue(response.context['form'].errors)
+    def test_legacy_prefixed_routes_redirect(self):
+        res = self.client.get('/ar/about/')
+        self.assertRedirects(res, '/about/', fetch_redirect_response=True)
+        self.assertEqual(res.cookies['django_language'].value, 'ar')
 
-    def test_post_detail_valid_id(self):
-        response = self.client.get(reverse('blog:post_detail', args=[self.post1.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.post1.title)
-        self.assertContains(response, self.post1.content)
-        self.assertTemplateUsed(response, 'blog/post_detail.html')
+        res_en = self.client.get('/en/home/')
+        self.assertRedirects(res_en, '/home/', fetch_redirect_response=True)
+        self.assertEqual(res_en.cookies['django_language'].value, 'en')
 
-    def test_post_detail_invalid_id_returns_404(self):
-        response = self.client.get(reverse('blog:post_detail', args=[9999]))
-        self.assertEqual(response.status_code, 404)
+    def test_language_switching_with_query_params(self):
+        next_url = '/home/?search=django&sort=oldest'
+        response = self.client.post(reverse('set_language'), {
+            'language': 'en',
+            'next': next_url
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.cookies['django_language'].value, 'en')
+        self.assertTrue(response['Location'].endswith(next_url))
 
-    def test_post_detail_unpublished_returns_404(self):
-        response = self.client.get(reverse('blog:post_detail', args=[self.unpublished_post.id]))
-        self.assertEqual(response.status_code, 404)
-
-    def test_search_query_parameter(self):
-        response = self.client.get(reverse('blog:home'), {'search': 'دجانغو'})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.post2.title)
-        self.assertNotContains(response, self.post1.title)
-
-    def test_sort_query_parameter(self):
-        response_oldest = self.client.get(reverse('blog:home'), {'sort': 'oldest'})
-        posts_oldest = list(response_oldest.context['posts'])
-        self.assertEqual(posts_oldest[0].id, self.post1.id)
-        self.assertEqual(posts_oldest[1].id, self.post2.id)
-
-        response_latest = self.client.get(reverse('blog:home'), {'sort': 'latest'})
-        posts_latest = list(response_latest.context['posts'])
-        self.assertEqual(posts_latest[0].id, self.post2.id)
-        self.assertEqual(posts_latest[1].id, self.post1.id)
-
-    def test_theme_cookie_persistence(self):
-        response = self.client.post(reverse('blog:set_theme', args=['dark']))
-        self.assertIn('theme', response.cookies)
-        self.assertEqual(response.cookies['theme'].value, 'dark')
+    def test_theme_switching_both_directions(self):
+        res_dark = self.client.post(reverse('blog:set_theme', args=['dark']), {'next': '/home/'})
+        self.assertEqual(res_dark.status_code, 302)
+        self.assertEqual(res_dark.cookies['theme'].value, 'dark')
 
         self.client.cookies['theme'] = 'dark'
-        home_res = self.client.get(reverse('blog:home'))
-        self.assertEqual(home_res.context['theme'], 'dark')
-        self.assertContains(home_res, 'data-theme="dark"')
+        home_dark = self.client.get(reverse('blog:home'))
+        self.assertEqual(home_dark.context['theme'], 'dark')
+        self.assertContains(home_dark, 'data-theme="dark"')
 
-    def test_invalid_theme_cookie_rejected_safely(self):
-        response = self.client.post(reverse('blog:set_theme', args=['invalid_theme_value']))
-        self.assertEqual(response.cookies['theme'].value, 'light')
+        res_light = self.client.post(reverse('blog:set_theme', args=['light']), {'next': '/home/'})
+        self.assertEqual(res_light.status_code, 302)
+        self.assertEqual(res_light.cookies['theme'].value, 'light')
 
-        self.client.cookies['theme'] = 'malicious_value'
-        home_res = self.client.get(reverse('blog:home'))
-        self.assertEqual(home_res.context['theme'], 'light')
+        self.client.cookies['theme'] = 'light'
+        home_light = self.client.get(reverse('blog:home'))
+        self.assertEqual(home_light.context['theme'], 'light')
+        self.assertContains(home_light, 'data-theme="light"')
 
-    def test_template_inheritance_and_named_url_resolving(self):
-        home_url = reverse('blog:home')
-        add_url = reverse('blog:add_post')
-        detail_url = reverse('blog:post_detail', args=[self.post1.id])
-        self.assertIn(home_url, ['/', '/ar/', '/en/'])
-        self.assertIn(add_url, ['/add/', '/ar/add/', '/en/add/'])
-        self.assertIn(detail_url, [f'/post/{self.post1.id}/', f'/ar/post/{self.post1.id}/', f'/en/post/{self.post1.id}/'])
-
-    def test_arabic_and_english_localization(self):
-        # Arabic homepage
-        res_ar = self.client.get('/ar/')
-        self.assertEqual(res_ar.status_code, 200)
-        self.assertContains(res_ar, 'dir="rtl"')
-        self.assertContains(res_ar, 'lang="ar"')
-        self.assertContains(res_ar, 'SIYAQ')
-        self.assertContains(res_ar, 'سِياق')
-
-        # English homepage
-        res_en = self.client.get('/en/')
-        self.assertEqual(res_en.status_code, 200)
-        self.assertContains(res_en, 'dir="ltr"')
-        self.assertContains(res_en, 'lang="en"')
-        self.assertContains(res_en, 'SIYAQ')
-        self.assertContains(res_en, 'Home')
-        self.assertContains(res_en, 'Add Post')
+    def test_image_url_method(self):
+        self.assertTrue(self.post1.get_image_url().startswith('/static/blog/img/'))

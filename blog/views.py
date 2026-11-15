@@ -5,6 +5,12 @@ from .models import Post
 from .forms import PostForm
 
 
+def legacy_lang_redirect(request, lang, subpath=''):
+    response = redirect('/' + subpath)
+    response.set_cookie('django_language', lang, path='/', samesite='Lax')
+    return response
+
+
 def home(request):
     search_query = request.GET.get('search', '').strip()
     sort_query = request.GET.get('sort', 'latest').strip().lower()
@@ -22,18 +28,18 @@ def home(request):
         sort_query = 'latest'
         posts = posts.order_by('-published_at', '-id')
 
-    theme = request.COOKIES.get('theme', 'light')
-    if theme not in ['light', 'dark']:
-        theme = 'light'
-
     context = {
         'posts': posts,
         'search_query': search_query,
         'sort_query': sort_query,
         'total_count': posts.count(),
-        'theme': theme,
     }
     return render(request, 'blog/home.html', context)
+
+
+def about(request):
+    context = {}
+    return render(request, 'blog/about.html', context)
 
 
 def add_post(request):
@@ -47,13 +53,8 @@ def add_post(request):
     else:
         form = PostForm()
 
-    theme = request.COOKIES.get('theme', 'light')
-    if theme not in ['light', 'dark']:
-        theme = 'light'
-
     context = {
         'form': form,
-        'theme': theme,
     }
     return render(request, 'blog/add_post.html', context)
 
@@ -61,13 +62,8 @@ def add_post(request):
 def post_detail(request, post_id: int):
     post = get_object_or_404(Post, pk=post_id, is_published=True)
 
-    theme = request.COOKIES.get('theme', 'light')
-    if theme not in ['light', 'dark']:
-        theme = 'light'
-
     context = {
         'post': post,
-        'theme': theme,
     }
     return render(request, 'blog/post_detail.html', context)
 
@@ -77,13 +73,13 @@ def set_theme(request, mode: str):
     if mode not in ['light', 'dark']:
         mode = 'light'
 
-    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/home/'
     if not url_has_allowed_host_and_scheme(
         url=next_url,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure()
     ):
-        next_url = '/'
+        next_url = '/home/'
 
     response = redirect(next_url)
 

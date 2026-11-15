@@ -1,126 +1,93 @@
-{% load static i18n %} {% get_current_language as CURRENT_LANGUAGE %} {%
-get_current_language_bidi as LANGUAGE_BIDI %}
-<!doctype html>
-<html
-  lang="{{ CURRENT_LANGUAGE }}"
-  dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
-  data-theme="{{ theme|default:'light' }}"
->
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}{% trans "SIYAQ — A Space for Thoughts, Stories &
-      Perspectives" %}{% endblock %}
-    </title>
-    <meta
-      name="description"
-      content="{% trans 'A quiet space dedicated to essays, creative writing, architecture, and cultural perspectives crafted with mindful typography and editorial clarity.' %}"
-    />
-    <link rel="stylesheet" href="{% static 'blog/css/style.css' %}" />
+{% load static i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<!DOCTYPE html>
+<html lang="{{ CURRENT_LANGUAGE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" data-theme="{{ theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SIYAQ &bull; سِياق{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
     {% block extra_head %}{% endblock %}
-  </head>
-  <body>
+</head>
+<body>
+    <!-- Top Editorial Header -->
     <header class="site-header">
-      <div class="container nav-container">
-        <a href="{% url 'blog:home' %}" class="brand-link">
-          <span>SIYAQ</span>
-          <span class="brand-arabic-sub">سِياق</span>
-        </a>
+        <div class="site-container nav-container">
+            <a href="{% url 'blog:home' %}" class="brand-link">
+                {% if CURRENT_LANGUAGE == 'ar' %}
+                    <span class="brand-arabic">سِياق</span>
+                {% else %}
+                    <span class="brand-latin">SIYAQ</span>
+                {% endif %}
+            </a>
 
-        <nav class="nav-menu">
-          <a href="{% url 'blog:home' %}" class="nav-item"
-            >{% trans "Home" %}</a
-          >
-          <a href="{% url 'blog:add_post' %}" class="nav-item"
-            >{% trans "Add Post" %}</a
-          >
+            <div class="header-right-cluster">
+                <nav class="nav-menu">
+                    <a href="{% url 'blog:home' %}" class="nav-item">{% trans "Home" %}</a>
+                    <a href="{% url 'blog:about' %}" class="nav-item">{% trans "About" %}</a>
+                    <a href="{% url 'blog:add_post' %}" class="nav-item nav-item-cta">{% trans "Add Post" %}</a>
+                </nav>
 
-          <div class="header-controls">
-            <!-- Language Switcher Form -->
-            <form
-              action="{% url 'set_language' %}"
-              method="post"
-              class="theme-form"
-            >
-              {% csrf_token %}
-              <input
-                name="next"
-                type="hidden"
-                value="{{ request.get_full_path }}"
-              />
-              {% if CURRENT_LANGUAGE == 'ar' %}
-              <input name="language" type="hidden" value="en" />
-              <button type="submit" class="btn-ctrl" title="Switch to English">
-                English
-              </button>
-              {% else %}
-              <input name="language" type="hidden" value="ar" />
-              <button
-                type="submit"
-                class="btn-ctrl"
-                title="التحويل إلى العربية"
-              >
-                العربية
-              </button>
-              {% endif %}
-            </form>
+                <div class="header-controls">
+                    {% if CURRENT_LANGUAGE == 'ar' %}
+                        <form action="{% url 'set_language' %}" method="post" class="control-form">
+                            {% csrf_token %}
+                            <input name="language" type="hidden" value="en">
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            <button type="submit" class="lang-switch-btn" title="Switch to English">English</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'set_language' %}" method="post" class="control-form">
+                            {% csrf_token %}
+                            <input name="language" type="hidden" value="ar">
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            <button type="submit" class="lang-switch-btn" title="التحويل إلى العربية">العربية</button>
+                        </form>
+                    {% endif %}
 
-            <!-- Theme Switcher Form -->
-            <form
-              action="{% if theme == 'dark' %}{% url 'blog:set_theme' 'light' %}{% else %}{% url 'blog:set_theme' 'dark' %}{% endif %}"
-              method="post"
-              class="theme-form"
-            >
-              {% csrf_token %}
-              <input
-                type="hidden"
-                name="next"
-                value="{{ request.get_full_path }}"
-              />
-              <button
-                type="submit"
-                class="btn-ctrl"
-                title="{% if theme == 'dark' %}{% trans 'Light Mode' %}{% else %}{% trans 'Dark Mode' %}{% endif %}"
-              >
-                {% if theme == 'dark' %} {% trans "Light Mode" %} {% else %} {%
-                trans "Dark Mode" %} {% endif %}
-              </button>
-            </form>
-          </div>
-        </nav>
-      </div>
+                    <form action="{% if theme == 'dark' %}{% url 'blog:set_theme' 'light' %}{% else %}{% url 'blog:set_theme' 'dark' %}{% endif %}" method="post" class="control-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" class="theme-switch-btn" title="{% if theme == 'dark' %}{% trans 'Light Mode' %}{% else %}{% trans 'Dark Mode' %}{% endif %}">
+                            {% if theme == 'dark' %}
+                                <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                            {% else %}
+                                <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </header>
 
     <main class="site-main">
-      <div class="container">{% block content %} {% endblock %}</div>
+        <div class="site-container">
+            {% block content %}
+            {% endblock %}
+        </div>
     </main>
 
-    <footer class="site-footer-editorial">
-      <div
-        class="footer-bg-wrapper"
-        style="
-          background-image: url(&quot;{% static &quot;blog/img/footer-bg.svg&quot; %}&quot;);
-        "
-      ></div>
-      <div class="container footer-content-inner">
-        <div class="footer-brand">SIYAQ &bull; سِياق</div>
-        <p class="footer-quote">
-          {% trans '"Quiet spaces and authentic reflections foster an enduring
-          reading experience."' %}
-        </p>
-        <nav class="footer-nav">
-          <a href="{% url 'blog:home' %}">{% trans "Home" %}</a>
-          <a href="{% url 'blog:add_post' %}">{% trans "Add Post" %}</a>
-        </nav>
-        <div class="footer-copyright">
-          {% trans "All rights reserved" %} &copy; {% now "Y" %} SIYAQ &bull;
-          سِياق
+    <footer class="site-footer-minimal">
+        <div class="site-container footer-inner">
+            <div class="footer-top-row">
+                <a href="{% url 'blog:home' %}" class="footer-brand-link">
+                    {% if CURRENT_LANGUAGE == 'ar' %}سِياق{% else %}SIYAQ{% endif %}
+                </a>
+                <nav class="footer-nav">
+                    <a href="{% url 'blog:home' %}">{% trans "Home" %}</a>
+                    <a href="{% url 'blog:about' %}">{% trans "About" %}</a>
+                    <a href="https://discord.com/users/686267127807606819" target="_blank" rel="noopener noreferrer">{% trans "Contact Us" %}</a>
+                </nav>
+            </div>
+            <div class="footer-copyright">
+                &copy; {% now "Y" %} {% if CURRENT_LANGUAGE == 'ar' %}سِياق &bull; جميع الحقوق محفوظة{% else %}SIYAQ &bull; All rights reserved{% endif %}
+            </div>
         </div>
-      </div>
     </footer>
 
     <script src="{% static 'blog/js/main.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
-  </body>
+</body>
 </html>

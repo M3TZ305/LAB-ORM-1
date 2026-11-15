@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 19:40+0300\n"
-"PO-Revision-Date: 2026-11-15 19:40+0300\n"
+"POT-Creation-Date: 2026-11-15 22:30+0300\n"
+"PO-Revision-Date: 2026-11-15 22:30+0300\n"
 "Last-Translator: SIYAQ Team\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -26,11 +26,11 @@ msgstr "العنوان"
 msgid "Content"
 msgstr "المحتوى"
 
-msgid "Write a thoughtful title..."
-msgstr "اكتب عنواناً جذاباً ومليئاً بالأفكار..."
+msgid "Enter article title..."
+msgstr "اكتب عنوان المقال..."
 
-msgid "Write your article or reflection here..."
-msgstr "اكتب تدوينتك أو تأملاتك هنا بالتفصيل..."
+msgid "Enter article content..."
+msgstr "اكتب محتوى المقال..."
 
 msgid "Please enter an article title."
 msgstr "يرجى إدخال عنوان للمقال."
@@ -41,14 +41,17 @@ msgstr "العنوان طويل جداً (الحد الأقصى 2048 حرفاً)
 msgid "Please enter the article content."
 msgstr "يرجى كتابة محتوى المقال."
 
-msgid "SIYAQ — A Space for Thoughts, Stories & Perspectives"
-msgstr "سِياق — مساحة للأفكار والحكايات ووجهات النظر"
-
 msgid "Home"
 msgstr "الرئيسية"
 
+msgid "About"
+msgstr "من نحن"
+
 msgid "Add Post"
 msgstr "إضافة مقال"
+
+msgid "Contact Us"
+msgstr "تواصل معنا"
 
 msgid "Light Mode"
 msgstr "الوضع النهاري"
@@ -56,17 +59,8 @@ msgstr "الوضع النهاري"
 msgid "Dark Mode"
 msgstr "الوضع الليلي"
 
-msgid "Selected Works & Essays"
-msgstr "إصدارات ومقالات مختارة"
-
-msgid "SIYAQ — An Editorial Space for Contemporary Reflections"
-msgstr "منصة سِياق للأفكار والتأملات المعاصرة"
-
-msgid "A quiet space dedicated to essays, creative writing, architecture, and cultural perspectives crafted with mindful typography and editorial clarity."
-msgstr "مساحة هادئة تحتفي بالكتابة الرصينة، العمارة، الفنون، والتجارب الفكرية برؤية بصرية واضحة وتصميم تحريري متقن."
-
 msgid "Search articles..."
-msgstr "ابحث في المقالات..."
+msgstr "ابحث عن مقال..."
 
 msgid "Search Box"
 msgstr "مربع البحث"
@@ -74,38 +68,14 @@ msgstr "مربع البحث"
 msgid "Reset"
 msgstr "إلغاء"
 
-msgid "Latest"
-msgstr "الأحدث أولاً"
-
-msgid "Oldest"
-msgstr "الأقدم أولاً"
-
 msgid "Sort Order"
 msgstr "ترتيب النتائج"
-
-msgid "Read More"
-msgstr "اقرأ المزيد"
-
-msgid "No articles found"
-msgstr "لا توجد مقالات معروضة حالياً"
 
 msgid "No results matched your search for:"
 msgstr "لم يتم العثور على أية نتائج مطابقة لبحثك:"
 
-msgid "No articles have been published yet. Be the first to share your thoughts."
-msgstr "لم تُنشر أي مقالات بعد. كن أول من يشارك أفكاره ومقالاته."
-
 msgid "Back to all articles"
 msgstr "العودة لكافة المقالات"
-
-msgid "Write the First Article"
-msgstr "كتابة أول تدوينة"
-
-msgid "Publish an Article"
-msgstr "إضافة مقال جديد"
-
-msgid "Add a new essay or reflection to SIYAQ to be featured on the journal."
-msgstr "أضف تدوينة وأفكاراً جديدة إلى منصة سِياق لتظهر في القائمة الرئيسية."
 
 msgid "Cancel"
 msgstr "إلغاء"
@@ -113,11 +83,83 @@ msgstr "إلغاء"
 msgid "Publish Article"
 msgstr "نشر المقال"
 
-msgid "Back to Articles"
-msgstr "العودة للمقالات"
+msgid "About SIYAQ"
+msgstr "عن سِياق"
 
-msgid "\"Quiet spaces and authentic reflections foster an enduring reading experience.\""
-msgstr "«المساحات الهادئة والأفكار الأصيلة تصنع تجربة قراءة فريدة تدوم طويلاً.»"
+msgid "SIYAQ is a platform for publishing articles and written content on a variety of topics."
+msgstr "سِياق منصة لنشر المقالات والكتابات في موضوعات متنوعة."
+
+msgid "Publisher Name"
+msgstr "اسم الناشر"
+
+msgid "Publication Date"
+msgstr "تاريخ النشر"
+
+msgid "Article Title"
+msgstr "عنوان المقال"
+
+msgid "Article Content"
+msgstr "محتوى المقال"
+
+msgid "Publisher not specified"
+msgstr "الناشر غير محدد"
+
+msgid "Enter publisher name..."
+msgstr "اكتب اسم الناشر..."
+
+msgid "Please enter the publisher name."
+msgstr "يرجى إدخال اسم الناشر."
+
+msgid "Publisher name cannot exceed 150 characters."
+msgstr "اسم الناشر لا يجب أن يتجاوز 150 حرفاً."
+
+msgid "Newest First"
+msgstr "الأحدث أولًا"
+
+msgid "Oldest First"
+msgstr "الأقدم أولًا"
+
+msgid "Articles"
+msgstr "المقالات"
+
+msgid "Read Article"
+msgstr "قراءة المقال"
+
+msgid "No articles available"
+msgstr "لا توجد مقالات حاليًا"
 
 msgid "All rights reserved"
 msgstr "جميع الحقوق محفوظة"
+
+msgid "Publisher name is required."
+msgstr "اسم الناشر مطلوب."
+
+msgid "Publisher name must contain at least two characters."
+msgstr "يجب أن يحتوي اسم الناشر على حرفين على الأقل."
+
+msgid "Publisher name must contain valid letters and permitted separators."
+msgstr "يجب أن يتكون اسم الناشر من حروف، ويمكن استخدام المسافات والفواصل المسموح بها."
+
+msgid "Numbers are not allowed in publisher names."
+msgstr "لا يمكن استخدام الأرقام في اسم الناشر."
+
+msgid "Article title is required."
+msgstr "عنوان المقال مطلوب."
+
+msgid "Article title must contain at least five characters."
+msgstr "يجب أن يتكون العنوان من 5 أحرف على الأقل."
+
+msgid "A title cannot consist only of numbers or symbols."
+msgstr "لا يمكن أن يتكون العنوان من أرقام أو رموز فقط."
+
+msgid "Article title exceeds the maximum allowed length."
+msgstr "تجاوز العنوان الحد الأقصى المسموح."
+
+msgid "Article content is required."
+msgstr "محتوى المقال مطلوب."
+
+msgid "Article content must contain at least 30 non-whitespace characters."
+msgstr "يجب ألا يقل محتوى المقال عن 30 حرفًا فعليًا."
+
+msgid "Article content must contain written text, not only numbers or symbols."
+msgstr "يجب أن يحتوي المحتوى على نص مكتوب، وليس أرقامًا أو رموزًا فقط."

@@ -1,17 +1,14 @@
 {% extends "blog/base.html" %}
 {% load static i18n %}
 
-{% block title %}{% trans "SIYAQ — A Space for Thoughts, Stories & Perspectives" %}{% endblock %}
+{% block title %}{% if CURRENT_LANGUAGE == 'ar' %}المقالات | سِياق{% else %}Articles | SIYAQ{% endif %}{% endblock %}
 
 {% block content %}
-<section class="editorial-hero">
-    <span class="hero-eyebrow">{% trans "Selected Works & Essays" %}</span>
-    <h1 class="hero-headline">{% trans "SIYAQ — An Editorial Space for Contemporary Reflections" %}</h1>
-    <p class="hero-description">
-        {% trans "A quiet space dedicated to essays, creative writing, architecture, and cultural perspectives crafted with mindful typography and editorial clarity." %}
-    </p>
-</section>
+<header class="page-header">
+    <h1 class="page-title">{% trans "Articles" %}</h1>
+</header>
 
+<!-- Filter & Search Section -->
 <div class="filter-search-bar">
     <form method="get" action="{% url 'blog:home' %}" class="search-form">
         <input 
@@ -24,59 +21,62 @@
             dir="auto"
         >
         {% if search_query %}
-            <a href="{% url 'blog:home' %}" class="btn-minimal">{% trans "Reset" %}</a>
+            <a href="{% url 'blog:home' %}" class="btn-reset">{% trans "Reset" %}</a>
         {% endif %}
     </form>
 
     <div class="filter-actions">
         <select name="sort" class="editorial-select" aria-label="{% trans 'Sort Order' %}" onchange="window.location.href='{% url 'blog:home' %}?{% if search_query %}search={{ search_query }}&{% endif %}sort=' + this.value">
-            <option value="latest" {% if sort_query == 'latest' %}selected{% endif %}>{% trans "Latest" %}</option>
-            <option value="oldest" {% if sort_query == 'oldest' %}selected{% endif %}>{% trans "Oldest" %}</option>
+            <option value="latest" {% if sort_query == 'latest' %}selected{% endif %}>{% if CURRENT_LANGUAGE == 'ar' %}الأحدث{% else %}Newest{% endif %}</option>
+            <option value="oldest" {% if sort_query == 'oldest' %}selected{% endif %}>{% if CURRENT_LANGUAGE == 'ar' %}الأقدم{% else %}Oldest{% endif %}</option>
         </select>
     </div>
 </div>
 
+<!-- Two-Column Editorial Article Grid -->
 {% if posts %}
     <div class="articles-grid-two-col">
         {% for post in posts %}
             <article class="editorial-article-card">
                 <a href="{% url 'blog:post_detail' post.id %}" class="article-thumbnail-link">
-                    {% cycle 'blog/img/post-1.svg' 'blog/img/post-2.svg' 'blog/img/post-3.svg' 'blog/img/post-4.svg' as post_img %}
-                    <img src="{% static post_img %}" alt="{{ post.title }}" class="article-thumbnail-img" loading="lazy">
+                    <img src="{{ post.get_image_url }}" alt="{{ post.get_title }}" class="article-thumbnail-img" loading="lazy">
                 </a>
 
-                <div class="article-date-meta">
-                    {{ post.published_at|date:"Y-m-d" }} &bull; {{ post.published_at|time:"H:i" }}
+                <div class="article-date-meta" dir="auto">
+                    {% if post.publisher_name %}
+                        {% trans "Publisher Name" %}: <bdi>{{ post.publisher_name }}</bdi> &bull; {% trans "Publication Date" %}: {{ post.published_at|date:"n/j/y" }}
+                    {% else %}
+                        {% trans "Publisher not specified" %} &bull; {% trans "Publication Date" %}: {{ post.published_at|date:"n/j/y" }}
+                    {% endif %}
                 </div>
 
                 <h2 class="article-headline" dir="auto">
-                    <a href="{% url 'blog:post_detail' post.id %}">{{ post.title }}</a>
+                    <a href="{% url 'blog:post_detail' post.id %}">{{ post.get_title }}</a>
                 </h2>
 
                 <div class="article-excerpt" dir="auto">
-                    <p>{{ post.content|truncatewords:28 }}</p>
+                    <p>{{ post.get_content|truncatewords:24 }}</p>
                 </div>
 
-                <a href="{% url 'blog:post_detail' post.id %}" class="article-read-more-link">
-                    {% trans "Read More" %}
+                <a href="{% url 'blog:post_detail' post.id %}" class="btn-read-more">
+                    {% trans "Read Article" %}
                 </a>
             </article>
         {% endfor %}
     </div>
 {% else %}
     <div class="editorial-empty-state">
-        <h3 class="empty-headline">{% trans "No articles found" %}</h3>
         <p class="empty-text">
             {% if search_query %}
                 {% trans "No results matched your search for:" %} «<strong>{{ search_query }}</strong>».
             {% else %}
-                {% trans "No articles have been published yet. Be the first to share your thoughts." %}
+                {% trans "No articles available" %}
             {% endif %}
         </p>
         {% if search_query %}
-            <a href="{% url 'blog:home' %}" class="btn-minimal">{% trans "Back to all articles" %}</a>
+            <a href="{% url 'blog:home' %}" class="btn-read-more">{% trans "Back to all articles" %}</a>
         {% else %}
-            <a href="{% url 'blog:add_post' %}" class="btn-editorial-submit">{% trans "Write the First Article" %}</a>
+            <a href="{% url 'blog:add_post' %}" class="btn-read-more">{% trans "Add Post" %}</a>
         {% endif %}
     </div>
 {% endif %}

@@ -1,28 +1,32 @@
 {% extends "blog/base.html" %}
 {% load static i18n %}
 
-{% block title %}{{ post.title }} — SIYAQ &bull; سِياق{% endblock %}
+{% block title %}{{ post.get_title }} — SIYAQ &bull; سِياق{% endblock %}
 
 {% block content %}
 <article class="container-narrow editorial-post-detail">
     <header class="detail-header">
-        <div class="detail-date">
-            {{ post.published_at|date:"Y-m-d" }} &bull; {{ post.published_at|time:"H:i" }}
+        <div class="detail-date" dir="auto">
+            {% if post.publisher_name %}
+                {% trans "Publisher Name" %}: <bdi>{{ post.publisher_name }}</bdi> &bull; {% trans "Publication Date" %}: {{ post.published_at|date:"F j, Y, P" }}
+            {% else %}
+                {% trans "Publisher not specified" %} &bull; {% trans "Publication Date" %}: {{ post.published_at|date:"F j, Y, P" }}
+            {% endif %}
         </div>
-        <h1 class="detail-title" dir="auto">{{ post.title }}</h1>
+        <h1 class="detail-title" dir="auto">{{ post.get_title }}</h1>
     </header>
 
     <div class="detail-lead-image">
-        <img src="{% static 'blog/img/post-1.svg' %}" alt="{{ post.title }}" loading="lazy">
+        <img src="{{ post.get_image_url }}" alt="{{ post.get_title }}" loading="lazy">
     </div>
 
     <div class="detail-body" dir="auto">
-        {{ post.content }}
+        {{ post.get_content }}
     </div>
 
     <div class="detail-footer-nav">
-        <a href="{% url 'blog:home' %}" class="btn-minimal">
-            &larr; {% trans "Back to Articles" %}
+        <a href="{% url 'blog:home' %}" class="btn-read-more">
+            &larr; {% trans "Home" %}
         </a>
     </div>
 </article>

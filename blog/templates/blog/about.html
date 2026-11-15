@@ -1,0 +1,24 @@
+{% extends "blog/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% if CURRENT_LANGUAGE == 'ar' %}عن سِياق{% else %}About | SIYAQ{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container-narrow editorial-about-page">
+    <header class="page-header">
+        <h1 class="page-title">{% trans "About SIYAQ" %}</h1>
+    </header>
+
+    <div class="about-content-body" dir="auto">
+        <p>
+            {% trans "SIYAQ is a platform for publishing articles and written content on a variety of topics." %}
+        </p>
+    </div>
+
+    <div class="detail-footer-nav" style="margin-top: 3rem;">
+        <a href="{% url 'blog:home' %}" class="btn-read-more">
+            &larr; {% trans "Home" %}
+        </a>
+    </div>
+</div>
+{% endblock %}
