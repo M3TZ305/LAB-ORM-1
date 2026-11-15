@@ -1,0 +1,29 @@
+{% extends "blog/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ post.title }} — SIYAQ &bull; سِياق{% endblock %}
+
+{% block content %}
+<article class="container-narrow editorial-post-detail">
+    <header class="detail-header">
+        <div class="detail-date">
+            {{ post.published_at|date:"Y-m-d" }} &bull; {{ post.published_at|time:"H:i" }}
+        </div>
+        <h1 class="detail-title" dir="auto">{{ post.title }}</h1>
+    </header>
+
+    <div class="detail-lead-image">
+        <img src="{% static 'blog/img/post-1.svg' %}" alt="{{ post.title }}" loading="lazy">
+    </div>
+
+    <div class="detail-body" dir="auto">
+        {{ post.content }}
+    </div>
+
+    <div class="detail-footer-nav">
+        <a href="{% url 'blog:home' %}" class="btn-minimal">
+            &larr; {% trans "Back to Articles" %}
+        </a>
+    </div>
+</article>
+{% endblock %}

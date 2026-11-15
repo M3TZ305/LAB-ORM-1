@@ -1,0 +1,123 @@
+# English translations for SIYAQ.
+# Copyright (C) 2026 SIYAQ
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 19:40+0300\n"
+"PO-Revision-Date: 2026-11-15 19:40+0300\n"
+"Last-Translator: SIYAQ Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Arabic"
+msgstr "Arabic"
+
+msgid "English"
+msgstr "English"
+
+msgid "Title"
+msgstr "Title"
+
+msgid "Content"
+msgstr "Content"
+
+msgid "Write a thoughtful title..."
+msgstr "Write a thoughtful title..."
+
+msgid "Write your article or reflection here..."
+msgstr "Write your article or reflection here..."
+
+msgid "Please enter an article title."
+msgstr "Please enter an article title."
+
+msgid "The title is too long (maximum 2048 characters)."
+msgstr "The title is too long (maximum 2048 characters)."
+
+msgid "Please enter the article content."
+msgstr "Please enter the article content."
+
+msgid "SIYAQ — A Space for Thoughts, Stories & Perspectives"
+msgstr "SIYAQ — A Space for Thoughts, Stories & Perspectives"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Add Post"
+msgstr "Add Post"
+
+msgid "Light Mode"
+msgstr "Light Mode"
+
+msgid "Dark Mode"
+msgstr "Dark Mode"
+
+msgid "Selected Works & Essays"
+msgstr "Selected Works & Essays"
+
+msgid "SIYAQ — An Editorial Space for Contemporary Reflections"
+msgstr "SIYAQ — An Editorial Space for Contemporary Reflections"
+
+msgid "A quiet space dedicated to essays, creative writing, architecture, and cultural perspectives crafted with mindful typography and editorial clarity."
+msgstr "A quiet space dedicated to essays, creative writing, architecture, and cultural perspectives crafted with mindful typography and editorial clarity."
+
+msgid "Search articles..."
+msgstr "Search articles..."
+
+msgid "Search Box"
+msgstr "Search Box"
+
+msgid "Reset"
+msgstr "Reset"
+
+msgid "Latest"
+msgstr "Latest"
+
+msgid "Oldest"
+msgstr "Oldest"
+
+msgid "Sort Order"
+msgstr "Sort Order"
+
+msgid "Read More"
+msgstr "Read More"
+
+msgid "No articles found"
+msgstr "No articles found"
+
+msgid "No results matched your search for:"
+msgstr "No results matched your search for:"
+
+msgid "No articles have been published yet. Be the first to share your thoughts."
+msgstr "No articles have been published yet. Be the first to share your thoughts."
+
+msgid "Back to all articles"
+msgstr "Back to all articles"
+
+msgid "Write the First Article"
+msgstr "Write the First Article"
+
+msgid "Publish an Article"
+msgstr "Publish an Article"
+
+msgid "Add a new essay or reflection to SIYAQ to be featured on the journal."
+msgstr "Add a new essay or reflection to SIYAQ to be featured on the journal."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Publish Article"
+msgstr "Publish Article"
+
+msgid "Back to Articles"
+msgstr "Back to Articles"
+
+msgid "\"Quiet spaces and authentic reflections foster an enduring reading experience.\""
+msgstr "\"Quiet spaces and authentic reflections foster an enduring reading experience.\""
+
+msgid "All rights reserved"
+msgstr "All rights reserved"

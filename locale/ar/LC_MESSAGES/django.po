@@ -1,0 +1,123 @@
+# Arabic translations for SIYAQ.
+# Copyright (C) 2026 SIYAQ
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 19:40+0300\n"
+"PO-Revision-Date: 2026-11-15 19:40+0300\n"
+"Last-Translator: SIYAQ Team\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+msgid "Arabic"
+msgstr "العربية"
+
+msgid "English"
+msgstr "English"
+
+msgid "Title"
+msgstr "العنوان"
+
+msgid "Content"
+msgstr "المحتوى"
+
+msgid "Write a thoughtful title..."
+msgstr "اكتب عنواناً جذاباً ومليئاً بالأفكار..."
+
+msgid "Write your article or reflection here..."
+msgstr "اكتب تدوينتك أو تأملاتك هنا بالتفصيل..."
+
+msgid "Please enter an article title."
+msgstr "يرجى إدخال عنوان للمقال."
+
+msgid "The title is too long (maximum 2048 characters)."
+msgstr "العنوان طويل جداً (الحد الأقصى 2048 حرفاً)."
+
+msgid "Please enter the article content."
+msgstr "يرجى كتابة محتوى المقال."
+
+msgid "SIYAQ — A Space for Thoughts, Stories & Perspectives"
+msgstr "سِياق — مساحة للأفكار والحكايات ووجهات النظر"
+
+msgid "Home"
+msgstr "الرئيسية"
+
+msgid "Add Post"
+msgstr "إضافة مقال"
+
+msgid "Light Mode"
+msgstr "الوضع النهاري"
+
+msgid "Dark Mode"
+msgstr "الوضع الليلي"
+
+msgid "Selected Works & Essays"
+msgstr "إصدارات ومقالات مختارة"
+
+msgid "SIYAQ — An Editorial Space for Contemporary Reflections"
+msgstr "منصة سِياق للأفكار والتأملات المعاصرة"
+
+msgid "A quiet space dedicated to essays, creative writing, architecture, and cultural perspectives crafted with mindful typography and editorial clarity."
+msgstr "مساحة هادئة تحتفي بالكتابة الرصينة، العمارة، الفنون، والتجارب الفكرية برؤية بصرية واضحة وتصميم تحريري متقن."
+
+msgid "Search articles..."
+msgstr "ابحث في المقالات..."
+
+msgid "Search Box"
+msgstr "مربع البحث"
+
+msgid "Reset"
+msgstr "إلغاء"
+
+msgid "Latest"
+msgstr "الأحدث أولاً"
+
+msgid "Oldest"
+msgstr "الأقدم أولاً"
+
+msgid "Sort Order"
+msgstr "ترتيب النتائج"
+
+msgid "Read More"
+msgstr "اقرأ المزيد"
+
+msgid "No articles found"
+msgstr "لا توجد مقالات معروضة حالياً"
+
+msgid "No results matched your search for:"
+msgstr "لم يتم العثور على أية نتائج مطابقة لبحثك:"
+
+msgid "No articles have been published yet. Be the first to share your thoughts."
+msgstr "لم تُنشر أي مقالات بعد. كن أول من يشارك أفكاره ومقالاته."
+
+msgid "Back to all articles"
+msgstr "العودة لكافة المقالات"
+
+msgid "Write the First Article"
+msgstr "كتابة أول تدوينة"
+
+msgid "Publish an Article"
+msgstr "إضافة مقال جديد"
+
+msgid "Add a new essay or reflection to SIYAQ to be featured on the journal."
+msgstr "أضف تدوينة وأفكاراً جديدة إلى منصة سِياق لتظهر في القائمة الرئيسية."
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Publish Article"
+msgstr "نشر المقال"
+
+msgid "Back to Articles"
+msgstr "العودة للمقالات"
+
+msgid "\"Quiet spaces and authentic reflections foster an enduring reading experience.\""
+msgstr "«المساحات الهادئة والأفكار الأصيلة تصنع تجربة قراءة فريدة تدوم طويلاً.»"
+
+msgid "All rights reserved"
+msgstr "جميع الحقوق محفوظة"

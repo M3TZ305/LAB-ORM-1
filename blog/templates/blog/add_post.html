@@ -1,0 +1,62 @@
+{% extends "blog/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Publish an Article" %} — SIYAQ &bull; سِياق{% endblock %}
+
+{% block content %}
+<div class="container-narrow editorial-form-wrap">
+    <div class="form-header">
+        <h1 class="form-title">{% trans "Publish an Article" %}</h1>
+        <p class="hero-description">{% trans "Add a new essay or reflection to SIYAQ to be featured on the journal." %}</p>
+    </div>
+
+    <form method="post" action="{% url 'blog:add_post' %}" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-error" style="margin-bottom: 1.5rem;">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}" class="form-label">
+                {{ form.title.label }}
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="form-error">
+                    {% for error in form.title.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.content.id_for_label }}" class="form-label">
+                {{ form.content.label }}
+            </label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <div class="form-error">
+                    {% for error in form.content.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions-row">
+            <a href="{% url 'blog:home' %}" class="btn-minimal">
+                {% trans "Cancel" %}
+            </a>
+            <button type="submit" class="btn-editorial-submit">
+                {% trans "Publish Article" %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

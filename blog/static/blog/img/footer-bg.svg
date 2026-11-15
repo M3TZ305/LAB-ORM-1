@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" width="1600" height="600">
+  <defs>
+    <linearGradient id="footerBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="50%" stop-color="#0f0f10"/>
+      <stop offset="100%" stop-color="#080809"/>
+    </linearGradient>
+    <linearGradient id="archGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2a2825"/>
+      <stop offset="50%" stop-color="#3d3730"/>
+      <stop offset="100%" stop-color="#1c1a18"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1600" height="600" fill="url(#footerBg)"/>
+  <!-- Vast architectural colonnade silhouettes -->
+  <rect x="0" y="80" width="1600" height="40" fill="#201e1c" opacity="0.6"/>
+  <!-- Vaulted arches -->
+  <path d="M120,600 L120,240 A140,140 0 0,1 400,240 L400,600 Z" fill="url(#archGlow)" opacity="0.4"/>
+  <path d="M520,600 L520,240 A140,140 0 0,1 800,240 L800,600 Z" fill="url(#archGlow)" opacity="0.5"/>
+  <path d="M920,600 L920,240 A140,140 0 0,1 1200,240 L1200,600 Z" fill="url(#archGlow)" opacity="0.4"/>
+  <path d="M1320,600 L1320,240 A140,140 0 0,1 1600,240 L1600,600 Z" fill="url(#archGlow)" opacity="0.3"/>
+  <!-- Floor reflection -->
+  <rect x="0" y="520" width="1600" height="80" fill="#080808" opacity="0.9"/>
+  <!-- Atmospheric overlay -->
+  <rect width="1600" height="600" fill="#000000" opacity="0.3"/>
+</svg>

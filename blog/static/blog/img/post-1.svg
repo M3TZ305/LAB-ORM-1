@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2c3437"/>
+      <stop offset="60%" stop-color="#4a5559"/>
+      <stop offset="100%" stop-color="#707d82"/>
+    </linearGradient>
+    <linearGradient id="sandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c8b9a6"/>
+      <stop offset="50%" stop-color="#b09f8c"/>
+      <stop offset="100%" stop-color="#8c7a68"/>
+    </linearGradient>
+    <linearGradient id="wallLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e8e2d8"/>
+      <stop offset="100%" stop-color="#d4cbbe"/>
+    </linearGradient>
+    <linearGradient id="wallShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#5a524a"/>
+      <stop offset="100%" stop-color="#3c3631"/>
+    </linearGradient>
+  </defs>
+  <!-- Background / Sky -->
+  <rect width="800" height="500" fill="url(#skyGrad)"/>
+  <!-- Distant dunes / landscape -->
+  <path d="M0,320 Q200,260 450,290 T800,270 L800,500 L0,500 Z" fill="url(#sandGrad)" opacity="0.85"/>
+  <!-- Architectural monolithic block - shadow face -->
+  <polygon points="180,480 340,480 340,140 180,210" fill="url(#wallShadow)"/>
+  <!-- Architectural monolithic block - light face -->
+  <polygon points="340,480 560,450 560,110 340,140" fill="url(#wallLight)"/>
+  <!-- Colonnade / Window slit -->
+  <polygon points="410,380 435,376 435,200 410,205" fill="#1e1b18" opacity="0.9"/>
+  <polygon points="470,370 495,366 495,210 470,215" fill="#1e1b18" opacity="0.9"/>
+  <!-- Angular cantilever beam -->
+  <polygon points="140,230 480,170 480,140 140,195" fill="#f4efe6"/>
+  <!-- Foreground geometric shadow -->
+  <polygon points="0,500 800,500 800,430 380,460 0,440" fill="#24201d" opacity="0.6"/>
+</svg>
