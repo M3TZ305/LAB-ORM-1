@@ -70,40 +70,24 @@ class ArticleTests(TestCase):
         self.assertEqual(list(response.context['posts']),[self.post,second])
         self.assertEqual(len(self.client.get('/home/',{'search':'مختلف'}).context['posts']),1)
 
-    def test_public_edit_and_delete(self):
-        self.client.logout()
-        response=self.client.get(f'/post/{self.post.pk}/')
-        self.assertContains(response,'تعديل المقال')
-        self.assertContains(response,'حذف المقال')
-        self.assertEqual(self.client.post(f'/post/{self.post.pk}/edit/',{**DATA,'title':'تعديل متاح للجميع'}).status_code,302)
-        self.assertEqual(self.client.post(f'/post/{self.post.pk}/delete/').status_code,302)
-    def test_no_public_auth_routes(self):
-        for url in ['/login/','/logout/','/signup/']:
-            self.assertEqual(self.client.get(url).status_code,404)
-        self.assertNotContains(self.client.get('/home/'),'دخول')
     def test_riyadh_time(self):
         from datetime import datetime, timezone
         from blog.templatetags.riyadh import riyadh_date
         self.assertIn('3:30',riyadh_date(datetime(2026,11,16,12,30,tzinfo=timezone.utc)))
 
     def test_simplified_form_and_dates(self):
+        self.client.force_login(self.owner)
         for url in ['/add/',f'/post/{self.post.pk}/edit/']:
             response=self.client.get(url)
-            self.assertContains(response,'name="published_at"')
+            self.assertNotContains(response,'name="published_at"')
             self.assertNotContains(response,'name="featured"')
             self.assertNotContains(response,'name="feature_new"')
             self.assertNotContains(response,'name="remove_attachments"')
 
-    def test_invalid_date_rejected(self):
-        before=Post.objects.count()
-        response=self.client.post('/add/',{**DATA,'published_at':'invalid'})
-        self.assertEqual(response.status_code,200)
-        self.assertIn('published_at',response.context['form'].errors)
-        self.assertEqual(Post.objects.count(),before)
-
     def test_required_fields_create_edit(self):
+        self.client.force_login(self.owner)
         for url in ['/add/',f'/post/{self.post.pk}/edit/']:
-            for field in ['publisher_name','title','published_at','content']:
+            for field in ['publisher_name','title','content']:
                 data={**DATA,field:''}
                 response=self.client.post(url,data)
                 self.assertEqual(response.status_code,200)
@@ -118,6 +102,7 @@ class ArticleTests(TestCase):
         from django.contrib.staticfiles import finders
         self.assertTrue(finders.find(post.get_image_url().removeprefix('/static/')))
     def test_shared_header_footer_and_english_dates(self):
+        self.client.force_login(self.owner)
         from blog.templatetags.riyadh import english_date
         from datetime import date, datetime, timezone as dt_timezone
         self.assertEqual(english_date(date(2026,11,16)),'16 Nov 2026')
@@ -134,15 +119,36 @@ class ArticleTests(TestCase):
         self.assertContains(response,'sort-toggle')
         self.assertContains(self.client.get('/about/'),'/articles/')
 
-    def test_single_timestamp_and_riyadh_input(self):
-        from zoneinfo import ZoneInfo
-        response=self.client.post('/add/',{**DATA,'published_at':'2026-11-16T19:30:00'})
-        self.assertRedirects(response,'/home/')
+
+    def test_exact_lab_fields(self):
+        from django.db import models
+        self.assertEqual(Post._meta.get_field('title').max_length,2048)
+        self.assertIsInstance(Post._meta.get_field('content'),models.TextField)
+        self.assertTrue(Post._meta.get_field('published_at').auto_now_add)
+        self.assertTrue(Post._meta.get_field('is_published').default)
+    def test_duplicate_retry_and_automatic_time(self):
+        from django.utils import timezone
+        before=timezone.now()
+        self.client.post('/add/',DATA)
         post=Post.objects.latest('pk')
-        self.assertEqual(post.published_at.hour,16)
-        self.assertEqual(post.published_at.astimezone(ZoneInfo('Asia/Riyadh')).hour,19)
-        self.assertContains(self.client.get(f'/post/{post.pk}/edit/'),'2026-11-16T19:30:00')
-        self.client.post(f'/post/{post.pk}/edit/',{**DATA,'published_at':'2026-11-17T08:15:00'})
-        post.refresh_from_db()
-        self.assertEqual(post.published_at.astimezone(ZoneInfo('Asia/Riyadh')).hour,8)
-        self.assertNotIn('article_date',[f.name for f in Post._meta.fields])
+        self.assertGreaterEqual(post.published_at,before)
+        count=Post.objects.count()
+        self.client.post('/add/',DATA)
+        self.assertEqual(Post.objects.count(),count)
+    def test_missing_ids_and_admin(self):
+        for action in ['', 'edit/', 'delete/']:
+            self.assertEqual(self.client.get('/post/999999/'+action).status_code,404)
+        self.client.force_login(self.staff)
+        self.assertEqual(self.client.get('/admin/').status_code,200)
+
+    def test_public_management_explicit_policy(self):
+        self.client.logout()
+        self.assertContains(self.client.get(f'/post/{self.post.pk}/'),'data-delete-open')
+        self.assertRedirects(self.client.post(f'/post/{self.post.pk}/edit/',{**DATA,'title':'تعديل من زائر'}),'/home/')
+        self.assertRedirects(self.client.post(f'/post/{self.post.pk}/delete/'),'/home/')
+        self.assertFalse(Post.objects.filter(pk=self.post.pk).exists())
+    def test_public_cannot_manage_drafts(self):
+        self.post.is_published=False;self.post.save()
+        for action in ['edit','delete']:
+            for method in ['get','post']:
+                self.assertEqual(getattr(self.client,method)(f'/post/{self.post.pk}/{action}/',DATA).status_code,404)

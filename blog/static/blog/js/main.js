@@ -5,7 +5,7 @@ if (upload) upload.addEventListener('change', () => {
 });
 
 const deleteDialog = document.getElementById('delete-dialog');
-if (deleteDialog) {
+if (deleteDialog && document.querySelector('[data-delete-open]')) {
     document.querySelector('[data-delete-open]').addEventListener('click', () => {
         deleteDialog.showModal();
         deleteDialog.querySelector('[data-delete-close]').focus();

@@ -1,6 +1,6 @@
 from django.db import transaction
 from .models import PostAttachment
-from .validators import safe_filename
+from .upload_validators import safe_filename
 
 def save_article(form, user):
     stored = []
@@ -10,12 +10,6 @@ def save_article(form, user):
             if not post.pk and user.is_authenticated: post.owner = user
             post.save()
             for item in form.cleaned_data.get('remove_attachments', []): item.delete()
-            if 'featured' in form.data or 'feature_new' in form.data:
-                post.attachments.filter(is_featured=True).update(is_featured=False)
-            featured = form.cleaned_data.get('featured')
-            if featured:
-                featured.is_featured = True
-                featured.save(update_fields=['is_featured'])
             use_new = True  # The first newly uploaded image replaces the article cover.
             for file in form.cleaned_data.get('attachments', []):
                 item = PostAttachment(post=post, original_filename=safe_filename(file.name), file_type=file.validated_type)

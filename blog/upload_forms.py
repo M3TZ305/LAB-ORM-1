@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 import hashlib
-from .validators import validate_upload
+from .upload_validators import validate_upload
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 class MultipleFileField(forms.FileField):

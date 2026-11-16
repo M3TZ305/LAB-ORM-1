@@ -4,7 +4,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from PIL import Image, UnidentifiedImageError
+from PIL import Image
 
 TYPES = {'.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp','.gif':'image/gif','.pdf':'application/pdf','.txt':'text/plain','.docx':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','.xlsx':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','.pptx':'application/vnd.openxmlformats-officedocument.presentationml.presentation'}
 def safe_filename(name):

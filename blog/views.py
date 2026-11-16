@@ -3,12 +3,13 @@ from django.db.models import Q
 from django.http import Http404
 from django.contrib import messages
 from django.utils import timezone
+import hashlib, json
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import resolve, Resolver404
 from django.views.decorators.http import require_http_methods, require_POST
 from .models import Post
 from .forms import PostForm
-from media_library.services import save_article
+from .attachment_services import save_article
 
 def legacy_redirect(request, subpath='home/'):
     while subpath.startswith(('ar/', 'en/')): subpath = subpath[3:]
@@ -35,11 +36,21 @@ def article_form(request, post_id=None):
     if post and not post.is_published: raise Http404
     form = PostForm(request.POST if request.method == 'POST' else None, request.FILES if request.method == 'POST' else None, instance=post)
     if request.method == 'POST' and form.is_valid():
+        payload = {key: str(value) for key, value in form.cleaned_data.items() if key != 'attachments'}
+        hashes = []
+        for upload in form.cleaned_data.get('attachments', []):
+            hashes.append(hashlib.sha256(upload.read()).hexdigest())
+            upload.seek(0)
+        fingerprint = hashlib.sha256(json.dumps([post_id, payload, hashes], sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        if not post and request.session.get('last_article_submission') == fingerprint:
+            return redirect('blog:home')
         try:
-            saved = save_article(form, request.user)
+            save_article(form, request.user)
         except OSError:
             form.add_error(None,'تعذر حفظ المرفقات. يرجى إعادة المحاولة واختيار الملفات مجددًا.')
         else:
+            if not post:
+                request.session['last_article_submission'] = fingerprint
             messages.success(request,'تم تحديث المقال.' if post else 'تم نشر المقال.')
             return redirect('blog:home')
     return render(request,'blog/add_post.html',{'form':form,'post':post,'current_time':timezone.now()})
@@ -87,4 +98,18 @@ def set_theme(request, mode: str):
         samesite='Lax',
         httponly=False
     )
+    return response
+
+from django.http import FileResponse
+from .models import PostAttachment
+def attachment(request, attachment_id):
+    item = get_object_or_404(PostAttachment.objects.select_related('post'), pk=attachment_id)
+    if not item.post.is_published and not item.post.can_manage(request.user): raise Http404
+    try: handle = item.file.open('rb')
+    except OSError: raise Http404
+    inline = item.file_type.startswith('image/') or item.file_type == 'application/pdf'
+    response = FileResponse(handle, as_attachment=not inline, filename=item.original_filename, content_type=item.file_type)
+    response['X-Content-Type-Options'] = 'nosniff'
+    response['Content-Security-Policy'] = "sandbox; default-src 'none'"
+    response['Cache-Control'] = 'private, no-store'
     return response

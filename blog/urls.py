@@ -4,6 +4,7 @@ from . import views
 app_name = 'blog'
 
 urlpatterns = [
+    path('media/<int:attachment_id>/', views.attachment, name='attachment'),
     path('articles/', views.home, name='articles'),
     path('home/', views.home, name='home'),
     path('about/', views.about, name='about'),

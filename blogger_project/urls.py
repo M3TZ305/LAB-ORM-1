@@ -6,7 +6,6 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/home/', permanent=False)),
     path('', include('blog.urls', namespace='blog')),
     path('admin/', admin.site.urls),
-    path('media/', include('media_library.urls')),
     path('ar/<path:subpath>', legacy_redirect),
     path('en/<path:subpath>', legacy_redirect),
     path('ar/', legacy_redirect), path('en/', legacy_redirect),

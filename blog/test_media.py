@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from blog.models import Post
 from blog.test_crud import DATA
-from .validators import validate_upload
+from .upload_validators import validate_upload
 from .models import PostAttachment
 
 def image_file(name='image.png'):
