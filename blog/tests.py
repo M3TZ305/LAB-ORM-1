@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.exceptions import ValidationError
-from .models import Post, PostTranslation
+from .models import Post
 from .forms import PostForm
 from .validators import validate_publisher_name, validate_article_title, validate_article_content
 
@@ -98,7 +98,7 @@ class PostFormAndScenariosTests(TestCase):
         self.client = Client()
 
     def test_scenario_a_publisher_numbers(self):
-        form_data = {
+        form_data = {'published_at':'2026-11-16T19:00:00',
             'publisher_name': '123456',
             'title': 'عنوان تجريبي صحيح للمقال',
             'content': 'هذا محتوى تجريبي طويل يكفي لكي يكون مقالاً صحيحاً ومقبولاً في النظام.'
@@ -109,7 +109,7 @@ class PostFormAndScenariosTests(TestCase):
         self.assertEqual(Post.objects.count(), 0)
 
     def test_scenario_b_title_symbols(self):
-        form_data = {
+        form_data = {'published_at':'2026-11-16T19:00:00',
             'publisher_name': 'سارة أحمد',
             'title': '@@@@@@',
             'content': 'هذا محتوى تجريبي طويل يكفي لكي يكون مقالاً صحيحاً ومقبولاً في النظام.'
@@ -120,7 +120,7 @@ class PostFormAndScenariosTests(TestCase):
         self.assertEqual(Post.objects.count(), 0)
 
     def test_scenario_c_content_numbers(self):
-        form_data = {
+        form_data = {'published_at':'2026-11-16T19:00:00',
             'publisher_name': 'سارة أحمد',
             'title': 'عنوان تجريبي صحيح للمقال',
             'content': '123456789123456789123456789123456'
@@ -131,7 +131,7 @@ class PostFormAndScenariosTests(TestCase):
         self.assertEqual(Post.objects.count(), 0)
 
     def test_scenario_d_all_spaces(self):
-        form_data = {
+        form_data = {'published_at':'2026-11-16T19:00:00',
             'publisher_name': '   ',
             'title': '     ',
             'content': '                         '
@@ -142,7 +142,7 @@ class PostFormAndScenariosTests(TestCase):
 
     def test_scenario_e_f_g_valid_submissions(self):
         # Arabic valid
-        form_data_ar = {
+        form_data_ar = {'published_at':'2026-11-16T19:00:00',
             'publisher_name': 'أحمد محمد',
             'title': 'القراءة في زمن السرعة',
             'content': 'تساعد القراءة على تنمية المعرفة وتحسين القدرة على التركيز، كما تمنح الإنسان فرصة لفهم الأفكار بطريقة أعمق.'
@@ -153,7 +153,7 @@ class PostFormAndScenariosTests(TestCase):
         self.assertEqual(post_ar.publisher_name, 'أحمد محمد')
 
         # English valid with numbers
-        form_data_en = {
+        form_data_en = {'published_at':'2026-11-16T19:00:00',
             'publisher_name': 'John Smith',
             'title': 'Python 3: A Beginner Guide',
             'content': 'Learning Python 3 and Django ORM is an amazing experience for building robust web applications rapidly and securely.'
@@ -193,21 +193,11 @@ class BlogViewsAndLanguageTests(TestCase):
     def test_legacy_prefixed_routes_redirect(self):
         res = self.client.get('/ar/about/')
         self.assertRedirects(res, '/about/', fetch_redirect_response=True)
-        self.assertEqual(res.cookies['django_language'].value, 'ar')
+        self.assertNotIn('django_language', res.cookies)
 
         res_en = self.client.get('/en/home/')
         self.assertRedirects(res_en, '/home/', fetch_redirect_response=True)
-        self.assertEqual(res_en.cookies['django_language'].value, 'en')
-
-    def test_language_switching_with_query_params(self):
-        next_url = '/home/?search=django&sort=oldest'
-        response = self.client.post(reverse('set_language'), {
-            'language': 'en',
-            'next': next_url
-        })
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.cookies['django_language'].value, 'en')
-        self.assertTrue(response['Location'].endswith(next_url))
+        self.assertNotIn('django_language', res_en.cookies)
 
     def test_theme_switching_both_directions(self):
         res_dark = self.client.post(reverse('blog:set_theme', args=['dark']), {'next': '/home/'})

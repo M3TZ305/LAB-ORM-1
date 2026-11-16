@@ -3,3 +3,5 @@ asgiref==3.13.0
 sqlparse==0.6.1
 tzdata==2026.6
 polib==1.2.0
+
+Pillow>=11.0,<13.0

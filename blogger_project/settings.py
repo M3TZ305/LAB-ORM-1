@@ -40,12 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Custom Apps
     'blog',
+    'media_library',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    'blog.middleware.ArabicOnlyMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -109,14 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ar'
 
-LANGUAGES = [
-    ('ar', _('Arabic')),
-    ('en', _('English')),
-]
+LANGUAGES = [("ar", "العربية")]
 
-LOCALE_PATHS = [
-    BASE_DIR / 'locale',
-]
+LOCALE_PATHS = []
 
 TIME_ZONE = 'Asia/Riyadh'
 
@@ -139,3 +135,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024
+MAX_POST_ATTACHMENTS = 5

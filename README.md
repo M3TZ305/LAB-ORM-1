@@ -1,251 +1,67 @@
-# SIYAQ — Bilingual Django Blogging Platform
+# SIYAQ | سِياق
 
-> **SIYAQ (سِياق)** is a robust, production-grade bilingual Django blogging platform developed as part of university assignment **LAB-ORM-1**. It demonstrates comprehensive mastery of core Django concepts, including the Model-View-Template (MVT) architecture, Django ORM, form validation, localization (Arabic/English), persistent cookies, theme switching (Dark/Light mode), and database migrations.
+A lightweight Arabic-only Django university blog. The public interface always uses Arabic and RTL, regardless of browser language or old language cookies. User-authored articles, including English text, are preserved.
 
----
+## Install and run
 
-## Table of Contents
-
-1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Technologies Used](#technologies-used)
-4. [Project Directory Structure](#project-directory-structure)
-5. [Installation & Setup](#installation--setup)
-6. [Database & Migrations](#database--migrations)
-7. [Running the Application](#running-the-application)
-8. [Database Model & ORM](#database-model--orm)
-9. [Course Concepts Compliance Matrix](#course-concepts-compliance-matrix)
-10. [Localization & RTL Support](#localization--rtl-support)
-11. [Theme Preferences (Cookies)](#theme-preferences-cookies)
-12. [Strict Form Validation](#strict-form-validation)
-13. [Django Admin Integration](#django-admin-integration)
-14. [Automated Testing](#automated-testing)
-15. [Contact & Support](#contact--support)
-
----
-
-## 1. Project Overview
-
-SIYAQ provides a clean editorial environment for publishing, browsing, searching, and managing articles in both Arabic and English. Built on Django 6.1 and SQLite, the platform adheres strictly to modern web development standards and university curriculum requirements, balancing editorial elegance with rigorous backend validation and secure state management.
-
----
-
-## 2. Features
-
-- **Dynamic Article Publishing:** Public form allowing creators to publish new articles instantly with strict validation.
-- **Publisher Metadata:** Captures and displays publisher names supporting Arabic and English characters.
-- **Homepage Feed:** Displays published posts ordered newest-first by default.
-- **Article Details:** Dedicated URL route (`/post/<int:post_id>/`) for viewing individual articles with 404 error handling.
-- **Search & Sorting:** Real-time query parameter filtering (`?search=...`) and sorting (`?sort=latest` / `?sort=oldest`).
-- **Bilingual Interface:** Full Arabic (RTL) and English (LTR) localization with seamless switching.
-- **Theme Switcher:** Persistent Light and Dark mode toggling backed by secure cookies.
-- **Django Admin:** Comprehensive administrative dashboard for managing posts and translations.
-
----
-
-## 3. Technologies Used
-
-- **Python 3.14**
-- **Django 6.1.3** (Web Framework)
-- **SQLite** (Relational Database via Django ORM)
-- **HTML5 & CSS3** (Responsive Layouts & Custom Variables)
-- **JavaScript** (Interactive UI enhancements)
-
----
-
-## 4. Project Directory Structure
-
-```text
-LAB-ORM-1/
-├── blog/
-│   ├── migrations/
-│   │   ├── 0001_initial.py
-│   │   ├── 0002_post_publisher_name.py
-│   │   └── 0003_posttranslation.py
-│   ├── static/blog/
-│   │   ├── css/style.css
-│   │   ├── js/main.js
-│   │   └── img/
-│   ├── templates/blog/
-│   │   ├── base.html
-│   │   ├── home.html
-│   │   ├── about.html
-│   │   ├── add_post.html
-│   │   └── post_detail.html
-│   ├── admin.py
-│   ├── apps.py
-│   ├── context_processors.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   ├── validators.py
-│   └── views.py
-├── blogger_project/
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── locale/
-│   ├── ar/LC_MESSAGES/django.po
-│   └── en/LC_MESSAGES/django.po
-├── db.sqlite3
-├── manage.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-## 5. Installation & Setup
-
-1. **Clone or Open Repository:**
-   Navigate to the project root directory.
-
-2. **Create and Activate Virtual Environment (Windows PowerShell):**
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-
-3. **Install Dependencies:**
-   ```powershell
-   python -m pip install -r requirements.txt
-   ```
-
----
-
-## 6. Database & Migrations
-
-Verify migration status and apply database schema:
+Use the single project folder `labs/LAB-ORM-1`:
 
 ```powershell
-python manage.py showmigrations
-python manage.py makemigrations --check --dry-run
-python manage.py migrate
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py createsuperuser
+.\.venv\Scripts\python.exe manage.py runserver
 ```
 
-To inspect specific migration SQL:
+Visit `/home/`. Root `/` redirects there. Other public routes are `/about/`, `/add/`, `/post/<id>/`, `/post/<id>/edit/`, `/post/<id>/delete/`. Theme changes use CSRF-protected POST. Old `/ar/` and `/en/` article routes redirect to canonical routes and preserve query parameters; unknown legacy paths return 404. There is no language switching endpoint.
+
+## Public article management
+
+Public login, logout and signup have been removed. All visitors may create, edit and delete published articles, as explicitly requested for this shared university project. This deliberately means visitors can change or permanently delete each other's content. CSRF protection, field/upload validation and a separate POST-only delete confirmation remain in place. Unpublished articles remain unavailable through public article routes. Django Admin authentication and existing account/owner metadata are retained to preserve records, but ownership no longer restricts published article management.
+
+Edit/delete controls appear inside article details. Original article IDs and publishing timestamps are preserved. Dates display date and time explicitly in Asia/Riyadh. The About page describes the educational project and its actual public workflow.
+
+## Models and migrations
+
+`blog.Post` retains `title(max_length=2048)`, `content`, `is_published(default=True)`, `published_at(auto_now_add=True)` and publisher name. It adds a nullable User foreign key with SET_NULL.
+
+Migration `blog.0004` preserves original posts and independently copies any distinct Arabic translation into an additional Post with its original publisher and timestamp before removing the obsolete translation table. Original titles/content are never overwritten. Translation removal is irreversible as a data operation: restore the SQLite backup if you need the original translation records. Migration history is retained. The installed database originally had no translation records.
+
+`media_library.PostAttachment` belongs to Post with CASCADE. Fields: file, safe display filename, validated MIME type, upload timestamp and featured flag. A conditional unique constraint allows at most one featured attachment per post. `media_library.0001` creates this model.
+
+Always back up SQLite before applying schema changes. Do not reset the database or fake migration status.
+
+## Attachments
+
+Supported formats: JPG/JPEG, PNG, WEBP, GIF, PDF, UTF-8 TXT, DOCX, XLSX and PPTX. Defaults: 10 MiB per file and five total attachments per article, configurable as `MAX_ATTACHMENT_SIZE` and `MAX_POST_ATTACHMENTS`. Pillow verifies image formats/dimensions. PDF headers/end markers, UTF-8 text and Office archive structure are checked; Office archives have entry, expansion and compression-ratio limits. Executables, HTML, SVG, scripts, macro-enabled formats and extension/content mismatches are rejected. These checks are not an antivirus or a document sanitizer: deployments needing malware scanning must add it.
+
+Uploads use Django storage under `MEDIA_ROOT = BASE_DIR / 'media'`, with UUID filenames under `posts/<post_id>/`. User files are ignored by Git. Static fallback article images remain untouched. Forms accept multiple attachments and show selected filenames. Users can select existing files for removal and select a cover or the first newly uploaded image. Invalid forms retain text; browsers require file re-selection.
+
+Article and attachment changes use a transaction. Failed new uploads are removed on rollback; attachment deletions schedule file cleanup only after database commit. Storage cleanup errors are logged and may require manual removal of orphan files. Upload I/O failures return an Arabic form error.
+
+`/media/<attachment_id>/` serves validated files through a permission-aware FileResponse in development and production. Images and PDF support preview; other documents use attachment disposition. Responses include `nosniff` and a sandbox CSP; raw storage paths are never exposed. Do not configure a public catch-all media route or web-server alias that bypasses draft permissions. For large deployments use a private storage service/internal redirect after the same authorization check.
+
+## Design
+
+Full-width header, main background and compact footer; responsive inner container up to 1400px. Two article columns on desktop and one on mobile. Alexandria Bold brand, Cairo headings and IBM Plex Sans Arabic UI/body use Google Fonts with system fallbacks. Light/dark themes persist through a validated cookie. Search and chronological sorting remain GET query parameters.
+
+## Verification
+
 ```powershell
-python manage.py sqlmigrate blog 0001
+.\.venv\Scripts\python.exe manage.py check
+.\.venv\Scripts\python.exe manage.py test
+.\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
+.\.venv\Scripts\python.exe manage.py showmigrations
 ```
 
----
+Tests cover article validators, Arabic routing, CRUD, public edit/delete behavior, CSRF, unpublished records, authentication, search, sort, theme cookies and attachment validation/storage cleanup. Media tests use temporary storage, never the real media directory.
 
-## 7. Running the Application
+## LAB-ORM-1 coverage
 
-Start the development server:
+The project retains Django apps/views, MVT, inherited templates, static files, named URL resolution, redirects, path/query parameters, cookies, Django ORM, SQLite, migration history and original article fields. Media and authorization extend this structure without a frontend framework or external authentication package.
 
-```powershell
-python manage.py runserver
-```
+Development server and DEBUG are for local use only. Before public deployment configure a secret key, allowed hosts, HTTPS, secure cookies, production WSGI/ASGI service and private media storage. Uploaded documents may contain untrusted content. Contact: https://discord.com/users/686267127807606819
 
-Open your browser at `http://127.0.0.1:8000/` (automatically redirects to `/home/`).
+## Single publication timestamp
 
-### Primary Public Routes:
-- `/` — Root redirect to homepage
-- `/home/` — Article feed with search & sorting
-- `/about/` — About SIYAQ editorial overview
-- `/add/` — Public article submission form
-- `/post/<int:post_id>/` — Individual article view
-- `/admin/` — Django Administration panel
-
----
-
-## 8. Database Model & ORM
-
-### Core `Post` Model (`blog/models.py`)
-```python
-class Post(models.Model):
-    publisher_name = models.CharField(max_length=150, blank=True, default="")
-    title = models.CharField(max_length=2048)
-    content = models.TextField()
-    is_published = models.BooleanField(default=True)
-    published_at = models.DateTimeField(auto_now_add=True)
-```
-
-### Django ORM Usage Examples
-- **Retrieving Published Posts:**
-  ```python
-  posts = Post.objects.filter(is_published=True).order_by('-published_at')
-  ```
-- **Searching Articles:**
-  ```python
-  posts = Post.objects.filter(
-      Q(title__icontains=query) | Q(content__icontains=query)
-  )
-  ```
-- **Creating a Record:**
-  ```python
-  Post.objects.create(publisher_name="أحمد", title="عنوان", content="محتوى...")
-  ```
-
----
-
-## 9. Course Concepts Compliance Matrix
-
-| Studied Topic | Implementation File | Verification Result |
-|---|---|---|
-| Apps & Views | `blog/views.py` | PASS |
-| Templates | `blog/templates/blog/*.html` | PASS |
-| Static Files | `blog/static/blog/` | PASS |
-| MVT Architecture | `blog/models.py`, `views.py`, `templates/` | PASS |
-| URL Mapping | `blogger_project/urls.py`, `blog/urls.py` | PASS |
-| URL Resolving | `{% url %}`, `reverse()` | PASS |
-| Template Inheritance | `blog/templates/blog/base.html` | PASS |
-| Cookies | `blog/views.py` (Theme & Lang) | PASS |
-| Path Parameters | `blog/urls.py` (`<int:post_id>`) | PASS |
-| Query Parameters | `blog/views.py` (`request.GET`) | PASS |
-| Django ORM | `blog/models.py`, `views.py` | PASS |
-| Migrations | `blog/migrations/` | PASS |
-
----
-
-## 10. Localization
-
-SIYAQ supports Arabic (`ar`) and English (`en`) through Django's `LocaleMiddleware` and translation files (`.po`). Language preferences persist via `django_language` cookies and automatically adapt layout directions (RTL for Arabic, LTR for English).
-
----
-
-## 11. Theme Preferences (Cookies)
-
-Theme toggling between Light and Dark mode is managed via cookies (`theme=light` or `theme=dark`) set in `blog/views.py` and read via `blog/context_processors.py`. Preferences persist across navigation, page refreshes, and language switches.
-
----
-
-## 12. Strict Form Validation
-
-Validation rules (`blog/validators.py`) ensure data integrity:
-- **Publisher Name:** Required, 2–150 characters, alphabetic letters supported (Arabic/English), strictly rejects numbers-only or symbols-only input.
-- **Article Title:** Required, 5–2048 characters, rejects numbers-only or symbols-only input.
-- **Article Content:** Required, minimum 30 non-whitespace characters, rejects numbers-only or symbols-only input.
-
----
-
-## 13. Django Admin Integration
-
-Manage platform data securely via Django Admin:
-```powershell
-python manage.py createsuperuser
-```
-Access at `http://127.0.0.1:8000/admin/`.
-
----
-
-## 14. Automated Testing
-
-Execute the test suite and system checks:
-```powershell
-python manage.py check
-python manage.py test
-python manage.py makemigrations --check --dry-run
-```
-*Result:* 17 unit and integration tests passing successfully (100% pass rate).
-
----
-
-## 15. Contact & Support
-
-- **Developer / Maintainer Discord:** [Click Here](https://discord.com/users/686267127807606819)
-- **Assignment:** LAB-ORM-1 | SIYAQ (سِياق)
+`published_at` is the only active article date field. It defaults to the current time and can be entered or edited through a required datetime-local field interpreted in Asia/Riyadh. Django stores aware timestamps in UTC and converts to Riyadh for display and input. Migration 0006 removes the redundant date field without changing existing published_at values. Earlier migrations remain as historical records.

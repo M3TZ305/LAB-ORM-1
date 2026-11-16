@@ -1,93 +1,16 @@
-{% load static i18n %}
-{% get_current_language as CURRENT_LANGUAGE %}
-{% get_current_language_bidi as LANGUAGE_BIDI %}
-<!DOCTYPE html>
-<html lang="{{ CURRENT_LANGUAGE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" data-theme="{{ theme|default:'light' }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SIYAQ &bull; سِياق{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
-    {% block extra_head %}{% endblock %}
-</head>
-<body>
-    <!-- Top Editorial Header -->
-    <header class="site-header">
-        <div class="site-container nav-container">
-            <a href="{% url 'blog:home' %}" class="brand-link">
-                {% if CURRENT_LANGUAGE == 'ar' %}
-                    <span class="brand-arabic">سِياق</span>
-                {% else %}
-                    <span class="brand-latin">SIYAQ</span>
-                {% endif %}
-            </a>
-
-            <div class="header-right-cluster">
-                <nav class="nav-menu">
-                    <a href="{% url 'blog:home' %}" class="nav-item">{% trans "Home" %}</a>
-                    <a href="{% url 'blog:about' %}" class="nav-item">{% trans "About" %}</a>
-                    <a href="{% url 'blog:add_post' %}" class="nav-item nav-item-cta">{% trans "Add Post" %}</a>
-                </nav>
-
-                <div class="header-controls">
-                    {% if CURRENT_LANGUAGE == 'ar' %}
-                        <form action="{% url 'set_language' %}" method="post" class="control-form">
-                            {% csrf_token %}
-                            <input name="language" type="hidden" value="en">
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                            <button type="submit" class="lang-switch-btn" title="Switch to English">English</button>
-                        </form>
-                    {% else %}
-                        <form action="{% url 'set_language' %}" method="post" class="control-form">
-                            {% csrf_token %}
-                            <input name="language" type="hidden" value="ar">
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                            <button type="submit" class="lang-switch-btn" title="التحويل إلى العربية">العربية</button>
-                        </form>
-                    {% endif %}
-
-                    <form action="{% if theme == 'dark' %}{% url 'blog:set_theme' 'light' %}{% else %}{% url 'blog:set_theme' 'dark' %}{% endif %}" method="post" class="control-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                        <button type="submit" class="theme-switch-btn" title="{% if theme == 'dark' %}{% trans 'Light Mode' %}{% else %}{% trans 'Dark Mode' %}{% endif %}">
-                            {% if theme == 'dark' %}
-                                <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                            {% else %}
-                                <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                            {% endif %}
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="site-main">
-        <div class="site-container">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </main>
-
-    <footer class="site-footer-minimal">
-        <div class="site-container footer-inner">
-            <div class="footer-top-row">
-                <a href="{% url 'blog:home' %}" class="footer-brand-link">
-                    {% if CURRENT_LANGUAGE == 'ar' %}سِياق{% else %}SIYAQ{% endif %}
-                </a>
-                <nav class="footer-nav">
-                    <a href="{% url 'blog:home' %}">{% trans "Home" %}</a>
-                    <a href="{% url 'blog:about' %}">{% trans "About" %}</a>
-                    <a href="https://discord.com/users/686267127807606819" target="_blank" rel="noopener noreferrer">{% trans "Contact Us" %}</a>
-                </nav>
-            </div>
-            <div class="footer-copyright">
-                &copy; {% now "Y" %} {% if CURRENT_LANGUAGE == 'ar' %}سِياق &bull; جميع الحقوق محفوظة{% else %}SIYAQ &bull; All rights reserved{% endif %}
-            </div>
-        </div>
-    </footer>
-
-    <script src="{% static 'blog/js/main.js' %}"></script>
-    {% block extra_scripts %}{% endblock %}
-</body>
-</html>
+{% load static %}<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="{{ theme|default:'light' }}">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{% block title %}سِياق{% endblock %}</title><link rel="stylesheet" href="{% static 'blog/css/style.css' %}?v=8"></head>
+<body><header class="site-header"><div class="site-container nav-container">
+<a class="brand-link" href="{% url 'blog:home' %}">سِياق</a>
+<nav class="nav-menu" aria-label="التنقل الرئيسي">
+<a class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'blog:home' %}">الرئيسية</a>
+<a class="nav-item {% if request.resolver_match.url_name == 'articles' %}active{% endif %}" href="{% url 'blog:articles' %}">المقالات</a>
+<a class="nav-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'blog:about' %}">من نحن</a>
+<a class="nav-item {% if request.resolver_match.url_name == 'add_post' %}active{% endif %}" href="{% url 'blog:add_post' %}">إضافة مقال</a></nav>
+<div class="header-controls">
+<form method="post" action="{% if theme == 'dark' %}{% url 'blog:set_theme' 'light' %}{% else %}{% url 'blog:set_theme' 'dark' %}{% endif %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="theme-toggle" aria-label="تبديل الوضع النهاري والليلي" title="تبديل المظهر">{% if theme == 'dark' %}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>{% else %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14a9 9 0 0 1-10.5-10.5A9 9 0 1 0 20.5 14Z"/></svg>{% endif %}</button></form>
+</div></div></header>
+<main class="site-main"><div class="site-container">{% for message in messages %}<p class="notice" role="status">{{ message }}</p>{% endfor %}{% block content %}{% endblock %}</div></main>
+<footer class="site-footer-minimal"><div class="site-container footer-top-row"><a class="brand-link" href="{% url 'blog:home' %}">سِياق</a><nav class="footer-nav" aria-label="روابط التذييل"><a href="{% url 'blog:home' %}">الرئيسية</a><a href="{% url 'blog:about' %}">من نحن</a><a href="https://discord.com/users/686267127807606819" target="_blank" rel="noopener noreferrer">تواصل معنا</a></nav></div></footer>
+<script src="{% static 'blog/js/main.js' %}?v=8" defer></script></body></html>
