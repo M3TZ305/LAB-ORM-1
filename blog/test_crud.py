@@ -67,7 +67,7 @@ class ArticleTests(TestCase):
     def test_search_sort(self):
         second=Post.objects.create(**{**DATA,'title':'عنوان آخر مختلف'})
         response=self.client.get('/home/',{'sort':'oldest'})
-        self.assertEqual(list(response.context['posts']),[self.post,second])
+        self.assertEqual(list(response.context['posts']),[second,self.post])
         self.assertEqual(len(self.client.get('/home/',{'search':'مختلف'}).context['posts']),1)
 
     def test_riyadh_time(self):
@@ -105,7 +105,7 @@ class ArticleTests(TestCase):
         self.client.force_login(self.owner)
         from blog.templatetags.riyadh import english_date
         from datetime import date, datetime, timezone as dt_timezone
-        self.assertEqual(english_date(date(2026,11,16)),'16 Nov 2026')
+        self.assertEqual(english_date(date(2026,11,16)),'November 16, 2026')
         for url in ['/home/','/about/','/add/',f'/post/{self.post.pk}/',f'/post/{self.post.pk}/edit/']:
             response=self.client.get(url)
             self.assertContains(response,'class="site-header"')
@@ -116,7 +116,7 @@ class ArticleTests(TestCase):
         response=self.client.get('/articles/',{'sort':'oldest','search':'تجريبي'})
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed(response,'blog/articles.html')
-        self.assertContains(response,'sort-toggle')
+        self.assertNotContains(response,'sort-toggle')
         self.assertContains(self.client.get('/about/'),'/articles/')
 
 
@@ -152,3 +152,13 @@ class ArticleTests(TestCase):
         for action in ['edit','delete']:
             for method in ['get','post']:
                 self.assertEqual(getattr(self.client,method)(f'/post/{self.post.pk}/{action}/',DATA).status_code,404)
+
+    def test_metadata_below_article_and_no_sort_controls(self):
+        for url in ['/home/','/articles/']:
+            response=self.client.get(url)
+            self.assertNotContains(response,'name="sort"')
+            self.assertContains(response,'نشر بواسطة')
+            self.assertContains(response,'تاريخ النشر:')
+        response=self.client.get(f'/post/{self.post.pk}/')
+        html=response.content.decode()
+        self.assertGreater(html.index('class="publication-meta"'),html.index('class="detail-body"'))

@@ -43,10 +43,6 @@ class Post(models.Model):
         if images:
             from django.urls import reverse
             return reverse('blog:attachment', args=[images[0].pk])
-        if self.id == 1:
-            return '/static/blog/img/posts/siyaq-city.webp'
-        elif self.id == 2:
-            return '/static/blog/img/posts/siyaq-reading.webp'
         return '/static/blog/img/posts/default-cover.svg'
 
 def upload_path(instance, filename):

@@ -45,7 +45,7 @@ class FreezeRegressionTests(TestCase):
     def test_combined_search_sort(self):
         second = Post.objects.create(**{**DATA, 'title':'اختبار بحث آخر'})
         page = self.client.get('/articles/', {'search':'اختبار', 'sort':'oldest'})
-        self.assertEqual(list(page.context['posts']), [self.post, second])
+        self.assertEqual(list(page.context['posts']), [second, self.post])
 
     def test_template_escaping(self):
         self.post.title = '<script>alert(1)</script>'
@@ -53,3 +53,31 @@ class FreezeRegressionTests(TestCase):
         page = self.client.get(f'/post/{self.post.pk}/')
         self.assertContains(page, '&lt;script&gt;')
         self.assertNotContains(page, '<script>alert(1)</script>')
+
+    def test_homepage_limits_query_to_four_articles(self):
+        for number in range(6):
+            Post.objects.create(**{**DATA, 'title': f'مقال تجريبي إضافي {number}'})
+        Post.objects.create(**{**DATA, 'is_published': False})
+        response = self.client.get('/home/')
+        expected = list(Post.objects.filter(is_published=True).order_by('-published_at', '-id').values_list('pk', flat=True)[:4])
+        self.assertEqual([post.pk for post in response.context['posts']], expected)
+        self.assertEqual(response.context['posts'].query.high_mark, 4)
+        archive = self.client.get('/articles/')
+        self.assertEqual(len(archive.context['posts']), 7)
+        self.assertEqual(
+            [post.pk for post in archive.context['posts']],
+            list(Post.objects.filter(is_published=True).order_by('-published_at', '-id').values_list('pk', flat=True)),
+        )
+
+    def test_count_before_slicing_and_after_filtering(self):
+        for index in range(5):
+            Post.objects.create(**{**DATA,'title':f'عنوان مميز {index}'})
+        Post.objects.create(**{**DATA,'title':'عنوان مميز مخفي','is_published':False})
+        home = self.client.get('/home/')
+        self.assertEqual(home.context['total_count'],6)
+        self.assertEqual(len(home.context['posts']),4)
+        for path in ['/home/','/articles/']:
+            page=self.client.get(path,{'search':'مميز'})
+            self.assertEqual(page.context['total_count'],5)
+            self.assertIsInstance(page.context['total_count'],int)
+            self.assertEqual(self.client.get(path,{'search':'غيرموجودبتاتا'}).context['total_count'],0)

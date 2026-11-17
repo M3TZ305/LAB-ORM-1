@@ -78,3 +78,67 @@ body{font-size:15px;line-height:1.85}.site-header{padding-block:16px;background:
   .action-link:hover, .upload-button:hover, .footer-nav a:hover,
   button:active { transform: none !important; }
 }
+
+.publication-meta{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-block:18px 8px;color:var(--muted);font-size:12px;line-height:1.9}.publication-meta p{margin:0}.publication-meta bdi{color:var(--ink)}.publication-meta time{display:block;font-size:12px}.detail-body+.publication-meta{margin-top:28px;padding-top:18px;border-top:1px solid var(--line)}.filter-search-bar .search-form{flex-basis:480px;max-width:100%}
+
+
+/* Compact reading proportions; full-width page backgrounds remain intact. */
+.site-container { max-width: 1140px; padding-inline: clamp(20px, 3vw, 40px); }
+.container-narrow { max-width: 720px; }
+.site-header { padding-block: 12px; }
+.nav-container { min-height: 44px; gap: 36px; }
+.brand-link { font-size: 26px; }
+.nav-item { padding: 8px 14px; font-size: 14px; }
+.site-main { padding-block: 30px 44px; }
+.page-header { margin-bottom: 22px; }
+.page-title { font-size: 26px; margin-bottom: 10px; }
+.filter-search-bar { margin-bottom: 24px; }
+.filter-search-bar .search-form { flex-basis: 410px; }
+.search-input-box { padding: 10px 14px; font-size: 14px; }
+.articles-grid-two-col { gap: 30px 28px; }
+.article-thumbnail-link { margin-bottom: 14px; }
+.article-headline { font-size: 21px; line-height: 1.65; margin-bottom: 8px; }
+.archive-excerpt { font-size: 14px; line-height: 1.9; }
+.publication-meta { margin-block: 12px 4px; gap: 2px; }
+.archive-header { padding-bottom: 20px; margin-bottom: 22px; }
+.archive-header p { font-size: 14px; }
+.archive-list { gap: 22px; }
+.archive-list .editorial-article-card {
+  grid-template-columns: 220px minmax(0, 1fr);
+  column-gap: 24px;
+  padding-bottom: 22px;
+}
+.archive-list .article-headline { font-size: 20px; }
+.detail-header { margin-bottom: 22px; }
+.detail-title { font-size: 27px; line-height: 1.7; }
+.detail-lead-image { max-width: 640px; margin: 0 auto 26px; }
+.detail-body { font-size: 16px; line-height: 2; }
+.about-page { max-width: 900px; }
+.about-heading { padding-bottom: 26px; }
+.about-heading h1 { font-size: 26px; }
+.about-heading p { font-size: 16px; line-height: 1.95; }
+.about-grid { gap: 24px; padding-top: 24px; }
+.about-grid h2 { font-size: 19px; }
+.form-group { margin-block: 18px; }
+.form-label { font-size: 14px; }
+.form-input, .form-textarea { font-size: 14px; }
+.site-footer-minimal { padding-block: 24px; }
+@media (max-width: 760px) {
+  .nav-container { gap: 12px; }
+  .nav-menu { gap: 4px; }
+  .nav-item { padding: 8px 12px; font-size: 13px; }
+  .brand-link { font-size: 25px; }
+  .site-main { padding-block: 24px 34px; }
+  .page-title, .detail-title, .about-heading h1 { font-size: 24px; }
+  .article-headline, .archive-list .article-headline { font-size: 20px; }
+  .articles-grid-two-col { gap: 28px; }
+  .filter-search-bar .search-form { flex-basis: 100%; }
+}
+@media (max-width: 650px) {
+  .archive-list .editorial-article-card { grid-template-columns: minmax(0, 1fr); }
+  .archive-list .article-thumbnail-link { grid-row: auto; }
+}
+
+.toast-region{position:fixed;inset-block-start:20px;inset-inline-end:20px;z-index:1000;display:flex;flex-direction:column;gap:10px;width:min(380px,calc(100% - 32px));pointer-events:none}.toast{display:flex;align-items:center;gap:18px;padding:14px 16px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-inline-start:3px solid var(--ink);border-radius:10px;box-shadow:0 5px 20px rgb(0 0 0 / .08);pointer-events:auto;font-size:14px;line-height:1.7;animation:siyaq-enter 200ms var(--motion-ease) both;transition:opacity 160ms ease,transform 160ms ease}.toast-text{flex:1;overflow-wrap:anywhere}.toast-close{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:24px;border-radius:5px}.toast-close:hover{background:var(--bg)}.toast.toast-leaving{animation:none;opacity:0;transform:translateY(-8px)}@media(max-width:600px){.toast-region{inset-inline-end:16px;inset-block-start:12px}.toast-close{width:44px;height:44px}}
+
+.home-articles-header{margin-bottom:22px}.home-articles-header .page-title{margin-bottom:4px}.home-articles-header .article-count{margin:0;color:var(--muted);font-size:13px;line-height:1.8}.home-search-bar{justify-content:center}.home-search-bar .search-form{flex:0 1 410px;width:100%}

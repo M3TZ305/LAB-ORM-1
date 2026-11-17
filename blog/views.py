@@ -22,12 +22,20 @@ def legacy_redirect(request, subpath='home/'):
     return redirect(target + ('?' + query if query else ''))
 
 def home(request):
-    search = request.GET.get('search','').strip()
-    sort = 'oldest' if request.GET.get('sort') == 'oldest' else 'latest'
-    posts = Post.objects.filter(is_published=True).prefetch_related('attachments')
-    if search: posts = posts.filter(Q(title__icontains=search)|Q(content__icontains=search))
-    posts = posts.order_by('published_at','id') if sort == 'oldest' else posts.order_by('-published_at','-id')
-    return render(request,'blog/articles.html' if request.resolver_match.url_name == 'articles' else 'blog/home.html',{'posts':posts,'search_query':search,'sort_query':sort})
+    search = request.GET.get('search', '').strip()
+    posts = Post.objects.filter(is_published=True)
+    if search:
+        posts = posts.filter(
+            Q(title__icontains=search) | Q(content__icontains=search)
+        )
+    total_count = posts.count()
+    posts = posts.order_by('-published_at', '-id')
+    posts = posts.prefetch_related('attachments')
+    if request.resolver_match.url_name == 'home':
+        posts = posts[:4]
+    template = 'blog/articles.html' if request.resolver_match.url_name == 'articles' else 'blog/home.html'
+    return render(request, template, {'posts': posts, 'search_query': search, 'total_count': total_count})
+
 def about(request): return render(request,'blog/about.html')
 
 @require_http_methods(['GET','POST'])
@@ -51,7 +59,7 @@ def article_form(request, post_id=None):
         else:
             if not post:
                 request.session['last_article_submission'] = fingerprint
-            messages.success(request,'تم تحديث المقال.' if post else 'تم نشر المقال.')
+            messages.success(request,'تم تعديل المقال بنجاح.' if post else 'تم نشر المقال بنجاح.')
             return redirect('blog:home')
     return render(request,'blog/add_post.html',{'form':form,'post':post,'current_time':timezone.now()})
 add_post = article_form
@@ -69,7 +77,7 @@ def delete_post(request,post_id):
     if request.method == 'POST':
         from django.db import transaction
         with transaction.atomic(): post.delete()
-        messages.success(request,'تم حذف المقال.')
+        messages.success(request,'تم حذف المقال بنجاح.')
         return redirect('blog:home')
     return redirect('blog:post_detail',post_id=post.pk)
 

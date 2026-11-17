@@ -16,5 +16,5 @@ def english_date(value):
     with override('en'):
         if hasattr(value, 'hour'):
             value = timezone.localtime(value, ZoneInfo('Asia/Riyadh'))
-            return date_format(value,'d M Y, H:i',use_l10n=False)
-        return date_format(value,'d M Y',use_l10n=False)
+            return date_format(value,'F j, Y',use_l10n=False)
+        return date_format(value,'F j, Y',use_l10n=False)
