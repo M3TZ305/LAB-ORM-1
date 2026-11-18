@@ -5,10 +5,10 @@ from django.contrib import messages
 from django.utils import timezone
 import hashlib, json
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.urls import resolve, Resolver404
+from django.urls import resolve, reverse, Resolver404
 from django.views.decorators.http import require_http_methods, require_POST
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, ReviewForm
 from .attachment_services import save_article
 
 def legacy_redirect(request, subpath='home/'):
@@ -65,10 +65,26 @@ def article_form(request, post_id=None):
 add_post = article_form
 edit_post = article_form
 
-def post_detail(request,post_id):
-    post=get_object_or_404(Post.objects.prefetch_related('attachments'),pk=post_id)
-    if not post.is_published: raise Http404
-    return render(request,'blog/post_detail.html',{'post':post})
+@require_http_methods(['GET', 'POST'])
+def post_detail(request, post_id):
+    post = get_object_or_404(
+        Post.objects.prefetch_related('attachments'), pk=post_id, is_published=True
+    )
+    form = ReviewForm(request.POST if request.method == 'POST' else None)
+    if request.method == 'POST' and form.is_valid():
+        review = form.save(commit=False)
+        review.post = post
+        review.save()
+        return redirect(reverse('blog:post_detail', args=[post.pk]) + '#reviews')
+
+    reviews = post.reviews.all()
+    return render(request, 'blog/post_detail.html', {
+        'post': post,
+        'review_form': form,
+        'reviews': reviews,
+        'review_count': reviews.count(),
+    })
+
 
 @require_http_methods(['GET','POST'])
 def delete_post(request,post_id):

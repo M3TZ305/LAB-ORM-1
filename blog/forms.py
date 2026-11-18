@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, Review
 from .validators import validate_publisher_name, validate_article_title, validate_article_content
 from .upload_forms import MultipleFileField
 
@@ -32,3 +32,14 @@ class PostForm(forms.ModelForm):
             self.add_error('attachments', 'الحد الأقصى للمرفقات في المقال هو ٥ ملفات.')
 
         return data
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['reviewer_name', 'rating', 'text']
+        labels = {'reviewer_name': 'اسم المقيم', 'rating': 'التقييم من 5', 'text': 'نص التقييم'}
+        widgets = {
+            'reviewer_name': forms.TextInput(attrs={'class': 'form-input', 'dir': 'auto'}),
+            'text': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'dir': 'auto'}),
+        }

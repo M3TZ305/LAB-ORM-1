@@ -1,0 +1,22 @@
+{% load riyadh %}
+<section id="reviews" class="reviews-section" aria-labelledby="reviews-title">
+  <h2 id="reviews-title">التقييمات <span>({{ review_count }})</span></h2>
+  {% for review in reviews %}
+    <article class="review-entry">
+      <div class="review-heading">
+        <strong dir="auto">{{ review.reviewer_name }}</strong>
+        <span><bdi dir="ltr">{{ review.rating }}/5</bdi></span>
+      </div>
+      <time datetime="{{ review.created_at|date:'c' }}">{{ review.created_at|riyadh_date }}</time>
+      <p dir="auto">{{ review.text }}</p>
+    </article>
+  {% empty %}
+    <p>لا توجد تقييمات لهذا المقال بعد.</p>
+  {% endfor %}
+  <form method="post" action="{% url 'blog:post_detail' post.pk %}#reviews" class="review-form">
+    {% csrf_token %}
+    <h3>أضف تقييمك</h3>
+    {{ review_form.as_p }}
+    <button type="submit" class="btn-editorial-submit">إرسال التقييم</button>
+  </form>
+</section>

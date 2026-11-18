@@ -60,3 +60,20 @@ class PostAttachment(models.Model):
         ordering = ['uploaded_at', 'id']
         constraints = [models.UniqueConstraint(fields=['post'], condition=models.Q(is_featured=True), name='one_featured_attachment')]
     def __str__(self): return self.original_filename
+
+
+class Review(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reviews')
+    reviewer_name = models.CharField(max_length=100)
+    text = models.TextField(max_length=1000)
+    rating = models.PositiveSmallIntegerField(choices=[(n, str(n)) for n in range(1, 6)])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name='review_rating_between_1_and_5',
+            ),
+        ]
